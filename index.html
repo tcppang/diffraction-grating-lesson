@@ -1,0 +1,1896 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diffraction Grating Lesson | HKDSE Physics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#17202A}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid #1D4ED8;outline-offset:2px}
+button:disabled{opacity:.45;cursor:default}
+input[type=range]{width:100%;margin:0;height:28px;accent-color:#1D4ED8}
+a{color:#1D4ED8}
+.lab-body{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap}
+.lab-controls{width:330px;flex:0 0 330px}
+.lab-main{flex:1 1 640px;min-width:0}
+@media (max-width:1060px){
+.lab-controls{width:100%;flex:1 1 100%;flex-direction:row !important;flex-wrap:wrap;align-items:flex-start}
+.lab-controls>*{flex:1 1 260px}
+.lab-controls>.lab-title{flex-basis:100%}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<template id="tpl">
+
+<div style="box-sizing:border-box;width:100%;background:#EEF0EC;padding:24px 16px 48px;display:flex;justify-content:center">
+<div style="width:100%;max-width:1040px;display:flex;flex-direction:column;gap:20px">
+
+<!-- Header -->
+<div style="background:#17202A;color:#fff;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#C9D1DC">HKDSE Physics · Wave Motion</div>
+<h1 style="margin:0;font-size:34px;line-height:1.1;font-weight:600">Diffraction Grating: learn it, then prove it</h1>
+<button onClick="{{goSim}}" style="align-self:flex-start;min-height:44px;padding:0;border:none;background:transparent;color:#FFFFFF;font-size:14px;font-weight:500;text-decoration:underline">Open the full interference lab (double slit and grating)</button>
+</div>
+<div style="display:flex;gap:8px">
+<button onClick="{{goLesson}}" aria-pressed="{{isLesson}}" style="{{tabLesson}}">Lesson</button>
+<button onClick="{{goSim}}" aria-pressed="{{isSim}}" style="{{tabSim}}">Simulation</button>
+<button onClick="{{goPractice}}" aria-pressed="{{isPractice}}" style="{{tabPractice}}">Practice</button>
+</div>
+</div>
+<sc-if value="{{isLesson}}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="5">
+<button onClick="{{c.go}}" disabled="{{c.locked}}" style="{{c.st}}">{{c.t}}</button>
+</sc-for>
+</div>
+</sc-if>
+</div>
+
+<!-- SIMULATION: double slit and grating -->
+<sc-if value="{{isSim}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#4B5563">Simulation</div>
+<h2 style="margin:0;font-size:28px;font-weight:600">Double slit and diffraction grating lab</h2>
+<div style="font-size:16px;line-height:1.5">Pick an experiment, then change one slider at a time and watch the pattern.</div>
+</div>
+<div style="display:flex;gap:8px">
+<button onClick="{{L_setSlit}}" aria-pressed="{{L_isSlit}}" style="{{L_tabSlit}}">Double slit</button>
+<button onClick="{{L_setGrating}}" aria-pressed="{{L_isGrating}}" style="{{L_tabGrating}}">Diffraction grating</button>
+</div>
+</div>
+<div class="lab-body">
+
+<!-- Controls -->
+<div class="lab-controls" style="box-sizing:border-box;background:#fff;border:1px solid #D5D9D2;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:22px">
+<div class="lab-title" style="font-size:18px;font-weight:600">Controls</div>
+
+<div style="display:flex;flex-direction:column;gap:4px">
+<div style="display:flex;justify-content:space-between;align-items:baseline">
+<label for="lam" style="font-size:15px;font-weight:500">Wavelength λ</label>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500">{{L_lamLabel}}</span>
+</div>
+<div style="height:10px;border-radius:5px;background:{{L_lamSwatch}}"></div>
+<input id="lam" type="range" min="400" max="700" step="1" value="{{L_lambda}}" onInput="{{L_onLambda}}" onChange="{{L_onLambda}}">
+<div style="display:flex;gap:8px">
+<button onClick="{{L_setViolet}}" style="flex:1;min-height:44px;border:1px solid #D5D9D2;background:#fff;border-radius:8px;font-size:13px;color:#17202A">Violet<br>405 nm</button>
+<button onClick="{{L_setGreen}}" style="flex:1;min-height:44px;border:1px solid #D5D9D2;background:#fff;border-radius:8px;font-size:13px;color:#17202A">Green<br>532 nm</button>
+<button onClick="{{L_setRed}}" style="flex:1;min-height:44px;border:1px solid #D5D9D2;background:#fff;border-radius:8px;font-size:13px;color:#17202A">Red<br>650 nm</button>
+</div>
+</div>
+
+<sc-if value="{{L_isSlit}}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:4px">
+<div style="display:flex;justify-content:space-between;align-items:baseline">
+<label for="sep" style="font-size:15px;font-weight:500">Slit separation a</label>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500">{{L_aLabel}}</span>
+</div>
+<input id="sep" type="range" min="0.2" max="1" step="0.05" value="{{L_a}}" onInput="{{L_onA}}" onChange="{{L_onA}}">
+</div>
+</sc-if>
+
+<sc-if value="{{L_isGrating}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;flex-direction:column;gap:4px">
+<div style="display:flex;justify-content:space-between;align-items:baseline">
+<label for="lines" style="font-size:15px;font-weight:500">Lines per mm</label>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500">{{L_linesLabel}}</span>
+</div>
+<input id="lines" type="range" min="100" max="600" step="20" value="{{L_lines}}" onInput="{{L_onLines}}" onChange="{{L_onLines}}">
+</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<div style="display:flex;justify-content:space-between;align-items:baseline">
+<label for="nslit" style="font-size:15px;font-weight:500">Number of slits lit, N</label>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500">{{L_NLabel}}</span>
+</div>
+<input id="nslit" type="range" min="2" max="20" step="1" value="{{L_N}}" onInput="{{L_onN}}" onChange="{{L_onN}}">
+<div style="font-size:13px;line-height:1.4;color:#4B5563">A real grating has thousands of slits, so its spots are much sharper than shown here.</div>
+</div>
+</div>
+</sc-if>
+
+<div style="display:flex;flex-direction:column;gap:4px">
+<div style="display:flex;justify-content:space-between;align-items:baseline">
+<label for="dist" style="font-size:15px;font-weight:500">Screen distance D</label>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500">{{L_DLabel}}</span>
+</div>
+<input id="dist" type="range" min="0.5" max="3" step="0.1" value="{{L_D}}" onInput="{{L_onD}}" onChange="{{L_onD}}">
+</div>
+
+<button onClick="{{L_reset}}" style="min-height:44px;border:1px solid #17202A;background:#fff;border-radius:8px;font-size:15px;font-weight:500;color:#17202A">Reset this mode</button>
+</div>
+
+<!-- Main column -->
+<div class="lab-main" style="display:flex;flex-direction:column;gap:24px">
+
+<!-- Top view -->
+<div style="background:#fff;border:1px solid #D5D9D2;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:baseline">
+<div style="font-size:18px;font-weight:600">Top view: where the bright spots form</div>
+<div style="font-size:13px;color:#4B5563">{{L_viewNote}}</div>
+</div>
+<div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+
+<div style="position:relative;width:560px;height:450px;flex-shrink:0;border-radius:8px;overflow:hidden;background:#0B1220">
+<div style="position:absolute;left:14px;top:10px;font-size:13px;color:#C9D1DC">Incident light, wavelength λ</div>
+<sc-for list="{{L_wavefronts}}" as="wf" hint-placeholder-count="3">
+<div style="{{wf.st}}"></div>
+</sc-for>
+
+<sc-for list="{{L_rays}}" as="r" hint-placeholder-count="7">
+<div style="{{r.st}}"></div>
+</sc-for>
+
+<div style="position:absolute;left:66px;top:0;width:8px;height:450px;background:#6B7686"></div>
+<sc-if value="{{L_isSlit}}" hint-placeholder-val="{{ true }}">
+<div>
+<div style="{{L_gapUp}}"></div>
+<div style="{{L_gapDown}}"></div>
+<div style="position:absolute;left:80px;top:{{L_aLabelTop}}px;font-size:14px;font-weight:600;color:#fff">a</div>
+</div>
+</sc-if>
+<sc-if value="{{L_isGrating}}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="{{L_gratingStyle}}"></div>
+<div style="position:absolute;left:80px;top:215px;font-size:14px;font-weight:600;color:#fff">d</div>
+</div>
+</sc-if>
+
+<div style="position:absolute;left:{{L_screenLeft}}px;top:30px;width:6px;height:390px;background:#9AA3B0"></div>
+<div style="position:absolute;left:{{L_screenLabelLeft}}px;top:10px;font-size:13px;color:#C9D1DC">Screen</div>
+
+<sc-for list="{{L_dots}}" as="d" hint-placeholder-count="7">
+<div style="{{d.st}}"></div>
+</sc-for>
+<sc-for list="{{L_dotLabels}}" as="dl" hint-placeholder-count="7">
+<div style="{{dl.st}}">{{dl.t}}</div>
+</sc-for>
+
+<div style="position:absolute;left:{{L_thetaLeft}}px;top:{{L_thetaTop}}px;font-size:15px;font-weight:600;color:#fff">θ</div>
+
+<div style="position:absolute;left:70px;top:416px;width:{{L_HxPx}}px;text-align:center;font-size:13px;color:#C9D1DC">{{L_DLabel}}</div>
+<div style="position:absolute;left:70px;top:436px;width:{{L_HxPx}}px;height:1px;background:#C9D1DC"></div>
+<div style="position:absolute;left:70px;top:431px;width:1px;height:11px;background:#C9D1DC"></div>
+<div style="position:absolute;left:{{L_screenLeft}}px;top:431px;width:1px;height:11px;background:#C9D1DC"></div>
+</div>
+
+<div style="flex:1 1 220px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="font-size:14px;font-weight:500;color:#4B5563">Highlight bright order</div>
+<div style="display:flex;align-items:center;gap:10px">
+<button onClick="{{L_prevOrder}}" disabled="{{L_prevDisabled}}" aria-label="Previous order" style="width:44px;height:44px;border:1px solid #17202A;background:#fff;border-radius:8px;font-size:20px;color:#17202A">−</button>
+<div style="flex-grow:1;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:500">n = {{L_order}}</div>
+<button onClick="{{L_nextOrder}}" disabled="{{L_nextDisabled}}" aria-label="Next order" style="width:44px;height:44px;border:1px solid #17202A;background:#fff;border-radius:8px;font-size:20px;color:#17202A">+</button>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;border-top:1px solid #D5D9D2">
+<sc-for list="{{L_readout}}" as="ro" hint-placeholder-count="5">
+<div style="display:flex;flex-direction:column;gap:2px;padding:9px 0;border-bottom:1px solid #D5D9D2">
+<div style="font-size:13px;color:#4B5563">{{ro.k}}</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500">{{ro.v}}</div>
+</div>
+</sc-for>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- Screen view -->
+<div style="background:#fff;border:1px solid #D5D9D2;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;justify-content:space-between;align-items:baseline">
+<div style="font-size:18px;font-weight:600">What you see on the screen</div>
+<div style="font-size:13px;color:#4B5563">Screen width shown: ±{{L_halfLabel}}</div>
+</div>
+<div style="display:flex;height:84px;background:#000;border-radius:6px;overflow:hidden">
+<sc-for list="{{L_strips}}" as="s" hint-placeholder-count="30">
+<div style="{{s.st}}"></div>
+</sc-for>
+</div>
+<div style="position:relative;height:50px">
+<sc-for list="{{L_marks}}" as="m" hint-placeholder-count="7">
+<div style="{{m.st}}">{{m.t}}</div>
+</sc-for>
+</div>
+<div style="font-size:13px;font-weight:500;color:#4B5563">Relative intensity</div>
+<div style="display:flex;align-items:flex-end;height:90px;border-bottom:1px solid #17202A;background:#F7F8F6">
+<sc-for list="{{L_bars}}" as="b" hint-placeholder-count="30">
+<div style="{{b.st}}"></div>
+</sc-for>
+</div>
+</div>
+
+<!-- Working + practice -->
+<div style="display:flex;gap:24px;align-items:stretch;flex-wrap:wrap">
+<div style="flex:1 1 380px;min-width:0;box-sizing:border-box;background:#17202A;color:#fff;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:14px">
+<div style="font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#C9D1DC">Live working</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:34px;font-weight:500">{{L_formulaMain}}</div>
+<div style="font-size:14px;line-height:1.5;color:#E5E9EF">{{L_formulaNote}}</div>
+<div style="display:flex;flex-direction:column;gap:8px;border-top:1px solid #4B5563;padding-top:14px">
+<sc-for list="{{L_steps}}" as="st" hint-placeholder-count="5">
+<div style="font-family:'IBM Plex Mono',monospace;font-size:14px;line-height:1.45">{{st.t}}</div>
+</sc-for>
+</div>
+</div>
+<div style="flex:1 1 300px;display:flex;flex-direction:column;gap:24px">
+<div style="background:#fff;border:1px solid #D5D9D2;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+<div style="font-size:18px;font-weight:600">Predict, then test</div>
+<sc-for list="{{L_tasks}}" as="tk" hint-placeholder-count="4">
+<div style="font-size:14px;line-height:1.45">{{tk.t}}</div>
+</sc-for>
+</div>
+<div style="background:#fff;border:1px solid #D5D9D2;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+<div style="font-size:18px;font-weight:600">Exam traps</div>
+<sc-for list="{{L_traps}}" as="tp" hint-placeholder-count="3">
+<div style="font-size:14px;line-height:1.45">{{tp.t}}</div>
+</sc-for>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</sc-if>
+
+<!-- Lesson heading -->
+<sc-if value="{{isLesson}}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#4B5563">{{stageKicker}}</div>
+<h2 style="margin:0;font-size:28px;font-weight:600">{{stageTitle}}</h2>
+<div style="font-size:16px;line-height:1.5;color:#17202A"><strong>Goal:</strong> {{stageGoal}}</div>
+</div>
+</sc-if>
+
+<!-- STAGE 1 -->
+<sc-if value="{{isS1}}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:20px">
+<div style="{{cardStyle}}">
+<div style="font-size:16px;line-height:1.6">A <strong>diffraction grating</strong> is a plate with a huge number of very thin, equally spaced slits. A single beam of light passes through and spreads into a row of sharp bright spots on the screen.</div>
+<div style="font-size:16px;line-height:1.6">The spot straight ahead is the <strong>central maximum</strong>, order <strong>n = 0</strong>. The others are numbered n = 1, 2, 3… on each side of the centre.</div>
+</div>
+<div style="{{cardStyle}}">
+<div style="font-size:18px;font-weight:600">Try it: change the number of slits</div>
+<div style="display:flex;flex-direction:column;gap:4px;max-width:420px">
+<div style="display:flex;justify-content:space-between"><label for="n1" style="font-size:15px;font-weight:500">Number of slits lit, N</label><span style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500">{{N}}</span></div>
+<input id="n1" type="range" min="2" max="20" step="1" value="{{N}}" onInput="{{onN}}" onChange="{{onN}}">
+</div>
+<div style="font-size:14px;color:#4B5563">Light: 600 nm · 300 lines per mm · screen 1.0 m away. The screen is shown ±80 cm wide.</div>
+</div>
+</div>
+</sc-if>
+
+<!-- STAGE: THE WHOLE PICTURE -->
+<sc-if value="{{isSP}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:20px">
+<div style="{{cardStyle}}">
+<div style="font-size:16px;line-height:1.6">Here is the whole experiment. Light of <strong>one wavelength</strong> hits a grating. Each slit sends light out in every direction, and the waves add up to give bright spots <strong>only at certain angles</strong>. Move the sliders and look for what changes and what stays put.</div>
+</div>
+<div style="{{cardStyle}}">
+<div style="font-size:18px;font-weight:600">Try it: change the experiment</div>
+<div style="display:flex;gap:24px;flex-wrap:wrap">
+<div style="flex:1 1 220px;display:flex;flex-direction:column;gap:4px">
+<div style="display:flex;justify-content:space-between"><label for="wp" style="font-size:15px;font-weight:500">Wavelength λ</label><span style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500">{{lamLabel}}</span></div>
+<div style="height:8px;border-radius:4px;background:{{lamCol}}"></div>
+<input id="wp" type="range" min="400" max="700" step="1" value="{{lam}}" onInput="{{onLam}}" onChange="{{onLam}}">
+</div>
+<div style="flex:1 1 220px;display:flex;flex-direction:column;gap:4px">
+<div style="display:flex;justify-content:space-between"><label for="lp" style="font-size:15px;font-weight:500">Lines per mm</label><span style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500">{{linesLabel}}</span></div>
+<input id="lp" type="range" min="200" max="600" step="20" value="{{lines}}" onInput="{{onLines}}" onChange="{{onLines}}">
+</div>
+<div style="flex:1 1 220px;display:flex;flex-direction:column;gap:4px">
+<div style="display:flex;justify-content:space-between"><label for="dp" style="font-size:15px;font-weight:500">Screen distance</label><span style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500">{{DLab}}</span></div>
+<input id="dp" type="range" min="0.5" max="3" step="0.1" value="{{Dval}}" onInput="{{onD}}" onChange="{{onD}}">
+</div>
+</div>
+<div style="overflow-x:auto">
+<div style="position:relative;width:100%;min-width:520px;max-width:640px;aspect-ratio:560 / 450;border-radius:8px;overflow:hidden;background:#0B1220">
+<sc-for list="{{pic}}" as="pc" hint-placeholder-count="30">
+<div style="{{pc.st}}">{{pc.t}}</div>
+</sc-for>
+</div>
+</div>
+<div style="font-size:13px;color:#4B5563">Top view, not to scale: the vertical direction is stretched.</div>
+<div style="font-size:16px;font-weight:600">What you see on the screen</div>
+<div style="display:flex;height:80px;background:#000;border-radius:6px;overflow:hidden">
+<sc-for list="{{strips}}" as="s" hint-placeholder-count="30">
+<div style="{{s.st}}"></div>
+</sc-for>
+</div>
+<div style="position:relative;height:30px">
+<sc-for list="{{marks}}" as="m" hint-placeholder-count="5">
+<div style="{{m.st}}">{{m.t}}</div>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px;background:#17202A;color:#fff;border-radius:8px;padding:16px;font-family:'IBM Plex Mono',monospace;font-size:14px;line-height:1.6">
+<sc-for list="{{picWork}}" as="pw" hint-placeholder-count="3">
+<div>{{pw.t}}</div>
+</sc-for>
+</div>
+</div>
+<div style="{{cardStyle}}">
+<div style="font-size:18px;font-weight:600">Think about these as you play</div>
+<div style="font-size:14px;line-height:1.5;color:#4B5563">There is nothing to submit. Change one slider at a time and talk about your answers with a classmate or write them in your notes.</div>
+<sc-for list="{{thinkQs}}" as="tq" hint-placeholder-count="5">
+<div style="display:flex;gap:12px;align-items:baseline;border-top:1px solid #D5D9D2;padding-top:10px">
+<div style="width:28px;flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:500">{{tq.n}}</div>
+<div style="font-size:16px;line-height:1.5">{{tq.t}}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<!-- STAGE 2 -->
+<sc-if value="{{isS2}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:20px">
+<div style="{{cardStyle}}">
+<div style="font-size:16px;line-height:1.6">A grating is labelled in <strong>lines per mm</strong> (really, slits per mm). The formula needs the <strong>spacing d between neighbouring slits, in metres</strong>.</div>
+<div style="font-size:16px;line-height:1.6"><strong>Step 1.</strong> d = 1 ÷ (lines per mm), which gives d in <strong>mm</strong>.<br><strong>Step 2.</strong> Change mm to m: multiply by 10⁻³.</div>
+</div>
+<div style="{{cardStyle}}">
+<div style="font-size:18px;font-weight:600">Try it: see what d looks like</div>
+<div style="display:flex;flex-direction:column;gap:4px;max-width:420px">
+<div style="display:flex;justify-content:space-between"><label for="l2" style="font-size:15px;font-weight:500">Lines per mm</label><span style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500">{{linesLabel}}</span></div>
+<input id="l2" type="range" min="100" max="600" step="20" value="{{lines}}" onInput="{{onLines}}" onChange="{{onLines}}">
+</div>
+<div style="position:relative;height:130px;border-radius:8px;overflow:hidden;background:#0B1220">
+<sc-for list="{{slits}}" as="sl" hint-placeholder-count="20">
+<div style="{{sl.st}}"></div>
+</sc-for>
+<div style="{{dBarStyle}}"></div>
+<div style="{{dLabelStyle}}">d</div>
+<div style="position:absolute;right:12px;top:8px;font-size:13px;color:#C9D1DC">Zoomed in: each bright line is one slit</div>
+</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:500;line-height:1.5;white-space:pre-line">{{dWorking}}</div>
+</div>
+<div style="{{cardStyle}}">
+<div style="font-size:18px;font-weight:600">Worked example</div>
+<div style="font-size:16px;line-height:1.6">A grating has <strong>300 lines per mm</strong>. Find d.</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:15px;line-height:1.7;background:#F7F8F6;border-radius:8px;padding:14px">d = 1 ÷ 300 mm = 3.33 × 10⁻³ mm<br>d = 3.33 × 10⁻³ × 10⁻³ m<br>d = 3.33 × 10⁻⁶ m  (= 3.33 µm)</div>
+<div style="font-size:14px;line-height:1.6;color:#4B5563"><strong>Common mistakes:</strong> using d = 300 as if it were the spacing; forgetting to change mm to m; mixing up "per mm" and "per cm".</div>
+</div>
+</div>
+</sc-if>
+
+<!-- STAGE 3 & 4 explainers -->
+<sc-if value="{{isS3}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:20px">
+<div style="background:#17202A;color:#fff;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:8px">
+<div style="font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#C9D1DC">The formula</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:44px;font-weight:500">d sin θ = nλ</div>
+<div style="font-size:15px;line-height:1.5;color:#E5E9EF">You do not need to know where it comes from. You need to know what each symbol means and when to use it.</div>
+</div>
+<div style="{{cardStyle}}">
+<div style="font-size:18px;font-weight:600">Where each symbol lives in the experiment</div>
+<div style="font-size:15px;line-height:1.5;color:#4B5563">Tap a symbol to light it up in the diagram. Use − and + to move the nth-order fringe.</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<sc-for list="{{symbols}}" as="sy" hint-placeholder-count="4">
+<button onClick="{{sy.go}}" aria-pressed="{{sy.on}}" style="{{sy.st}}"><span style="font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:500;margin-right:8px">{{sy.s}}</span>{{sy.t}}</button>
+</sc-for>
+</div>
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+<span style="font-size:15px;font-weight:500">Show the nth-order fringe for</span>
+<button onClick="{{prevDn}}" disabled="{{dnPrevDisabled}}" aria-label="Lower order" style="width:44px;height:44px;border:1px solid #17202A;background:#fff;border-radius:8px;font-size:20px;color:#17202A">−</button>
+<span style="width:70px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:500">n = {{dn}}</span>
+<button onClick="{{nextDn}}" disabled="{{dnNextDisabled}}" aria-label="Higher order" style="width:44px;height:44px;border:1px solid #17202A;background:#fff;border-radius:8px;font-size:20px;color:#17202A">+</button>
+</div>
+<div style="overflow-x:auto">
+<div style="position:relative;width:100%;min-width:620px;max-width:720px;aspect-ratio:720 / 420;background:#fff;border:1px solid #D5D9D2;border-radius:8px;box-sizing:border-box">
+<sc-for list="{{dg}}" as="g" hint-placeholder-count="30">
+<div style="{{g.st}}">{{g.t}}</div>
+</sc-for>
+</div>
+</div>
+<div style="align-self:center;border:1.5px solid #17202A;padding:10px 28px;font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:500">d sin θₙ = nλ</div>
+<div style="font-size:16px;line-height:1.6;background:#EEF0EC;border-radius:8px;padding:14px 16px;white-space:pre-line">{{symDetail}}</div>
+<div style="font-size:13px;color:#4B5563">Schematic only: angles and distances are not to scale.</div>
+</div>
+<div style="{{cardStyle}}">
+<div style="font-size:18px;font-weight:600">Which unknown? Rearrange the formula.</div>
+<sc-for list="{{rearr}}" as="ra" hint-placeholder-count="3">
+<div style="display:flex;gap:16px;align-items:baseline;flex-wrap:wrap;border-top:1px solid #D5D9D2;padding-top:10px">
+<div style="width:150px;flex-shrink:0;font-size:15px;font-weight:600">{{ra.k}}</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:500;width:200px;flex-shrink:0">{{ra.f}}</div>
+<div style="font-size:14px;line-height:1.5;color:#4B5563;flex-basis:240px;flex-grow:1">{{ra.t}}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isS4}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:20px">
+<div style="{{cardStyle}}">
+<div style="font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#4B5563">1. Theory</div>
+<div style="font-size:16px;line-height:1.6">When monochromatic light of wavelength λ falls <strong>normally</strong> on a plane transmission grating of slit spacing d, the nth-order bright fringe is at angle θₙ, measured from the straight-through direction, where</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:500">d sin θₙ = nλ</div>
+<div style="font-size:16px;line-height:1.6">The fringe lands on the screen at a distance <strong>y</strong> from the central bright fringe. The screen distance D, the distance y and the ray from the grating make a right-angled triangle, so</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:500">y = D tan θ</div>
+<div style="font-size:15px;line-height:1.6;color:#4B5563">Use <strong>tan θ</strong> here, not sin θ. The two are close only when θ is small.</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+<span style="font-size:15px;font-weight:600;background:#17202A;color:#fff;border-radius:8px;padding:8px 14px">1. Find d</span>
+<span style="font-size:18px">→</span>
+<span style="font-size:15px;font-weight:600;background:#17202A;color:#fff;border-radius:8px;padding:8px 14px">2. Find θ (d sin θ = nλ)</span>
+<span style="font-size:18px">→</span>
+<span style="font-size:15px;font-weight:600;background:#17202A;color:#fff;border-radius:8px;padding:8px 14px">3. Find y (y = D tan θ)</span>
+</div>
+</div>
+<div style="{{cardStyle}}">
+<div style="font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#4B5563">2. The typical question (worked example)</div>
+<div style="background:#FFF4D6;border:1px solid #B45309;border-radius:8px;padding:12px 14px;font-size:15px;line-height:1.5;color:#17202A"><strong>Make sure you understand this question.</strong> Almost every grating question follows this path: d first, then θ, then the distance y on the screen. Read each step and ask yourself why it comes next.</div>
+<div style="font-size:16px;line-height:1.6">A grating has <strong>300 lines per mm</strong>. Light of wavelength <strong>600 nm</strong> falls normally on it. A screen is <strong>2.00 m</strong> from the grating.<br>(a) Find the grating spacing d.<br>(b) Find the angle θ of the 1st-order bright fringe.<br>(c) Find the distance y between the central bright fringe and the 1st-order bright fringe.</div>
+<div style="overflow-x:auto">
+<div style="position:relative;width:100%;min-width:420px;max-width:560px;aspect-ratio:560 / 260;background:#0B1220;border-radius:8px;overflow:hidden">
+<sc-for list="{{exFig}}" as="ef" hint-placeholder-count="20">
+<div style="{{ef.st}}">{{ef.t}}</div>
+</sc-for>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;border:1px solid #D5D9D2;border-radius:8px;overflow:hidden">
+<sc-for list="{{exSteps}}" as="es" hint-placeholder-count="3">
+<div style="display:flex;gap:12px;justify-content:space-between;align-items:flex-start;padding:12px 14px;border-top:1px solid #D5D9D2">
+<div style="font-family:'IBM Plex Mono',monospace;font-size:14px;line-height:1.7;white-space:pre-line">{{es.t}}</div>
+<div style="flex-shrink:0;font-size:13px;font-weight:600;background:#17202A;color:#fff;border-radius:6px;padding:2px 8px">{{es.m}}</div>
+</div>
+</sc-for>
+</div>
+<div style="font-size:13px;color:#4B5563">M = method mark, A = accuracy mark. Each mark goes with one clear step.</div>
+</div>
+<div style="{{cardStyle}}">
+<div style="font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#4B5563">3. Explore, then practise</div>
+<div style="font-size:16px;line-height:1.6">Use the simulation below to see what d, λ and the screen distance do. Then do Check 1 and Check 2. Each one asks the same three things <strong>in the same order</strong>: d first, then θ, and finally the distance y (using tan θ).</div>
+</div>
+</div>
+</sc-if>
+
+<!-- STAGE 5 -->
+<sc-if value="{{isS5}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:20px">
+<div style="{{cardStyle}}">
+<div style="font-size:18px;font-weight:600">Derive the formula yourself</div>
+<div style="font-size:15px;line-height:1.5;color:#4B5563">The orders spread outward as n gets bigger. Where do they stop? Answer each step to build the formula. The next step appears when you get one right.</div>
+<sc-for list="{{dsteps}}" as="ds" hint-placeholder-count="2">
+<sc-if value="{{ds.show}}" hint-placeholder-val="{{ true }}">
+<div style="border-top:1px solid #D5D9D2;padding-top:14px;display:flex;flex-direction:column;gap:10px">
+<div style="font-size:14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#4B5563">{{ds.title}}</div>
+<div style="font-size:16px;line-height:1.6">{{ds.text}}</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ds.options}}" as="o" hint-placeholder-count="4">
+<button onClick="{{o.pick}}" style="{{o.st}}">{{o.label}}</button>
+</sc-for>
+</div>
+<sc-if value="{{ds.hasFb}}" hint-placeholder-val="{{ false }}">
+<div style="{{ds.fbStyle}}">{{ds.fbText}}</div>
+</sc-if>
+<sc-if value="{{ds.done}}" hint-placeholder-val="{{ false }}">
+<div style="font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:500;background:#17202A;color:#fff;border-radius:8px;padding:12px 16px">{{ds.result}}</div>
+</sc-if>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button onClick="{{ds.toggleHint}}" style="min-height:44px;padding:0 16px;border:1px solid #17202A;background:#fff;border-radius:8px;font-size:14px;color:#17202A">{{ds.hintBtn}}</button>
+</div>
+<sc-if value="{{ds.hintOpen}}" hint-placeholder-val="{{ false }}">
+<div style="font-size:15px;line-height:1.5;background:#EEF0EC;border-radius:8px;padding:12px 14px"><strong>Hint:</strong> {{ds.hint}}</div>
+</sc-if>
+</div>
+</sc-if>
+</sc-for>
+<sc-if value="{{derivedAll}}" hint-placeholder-val="{{ false }}">
+<div style="background:#DDEFE2;color:#14532D;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px">
+<div style="font-size:18px;font-weight:600">You derived it: n &lt; d / λ</div>
+<div style="font-size:15px;line-height:1.6"><strong>Routine:</strong> 1. find d in metres. 2. work out d ÷ λ. 3. round <strong>down</strong> to get n_max (if d ÷ λ is exactly a whole number, take one less). 4. The orders run from −n_max to +n_max, so the total number of bright spots is <strong>2n_max + 1</strong>.</div>
+</div>
+</sc-if>
+</div>
+<div style="{{cardStyle}}">
+<div style="font-size:18px;font-weight:600">Try it: watch the outer spots disappear</div>
+<div style="display:flex;gap:24px;flex-wrap:wrap">
+<div style="flex:1 1 280px;display:flex;flex-direction:column;gap:4px">
+<div style="display:flex;justify-content:space-between"><label for="l5" style="font-size:15px;font-weight:500">Lines per mm</label><span style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500">{{linesLabel}}</span></div>
+<input id="l5" type="range" min="100" max="600" step="20" value="{{lines}}" onInput="{{onLines}}" onChange="{{onLines}}">
+</div>
+<div style="flex:1 1 280px;display:flex;flex-direction:column;gap:4px">
+<div style="display:flex;justify-content:space-between"><label for="w5" style="font-size:15px;font-weight:500">Wavelength λ</label><span style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500">{{lamLabel}}</span></div>
+<input id="w5" type="range" min="400" max="700" step="1" value="{{lam}}" onInput="{{onLam}}" onChange="{{onLam}}">
+</div>
+</div>
+<div style="position:relative;height:120px;border-radius:8px;overflow:hidden;background:#0B1220">
+<sc-for list="{{ruler}}" as="rl" hint-placeholder-count="10">
+<div style="{{rl.st}}">{{rl.t}}</div>
+</sc-for>
+<div style="position:absolute;left:0;top:0;width:2px;height:100%;background:#E5E9EF"></div>
+<div style="position:absolute;right:0;top:0;width:2px;height:100%;background:#E5E9EF"></div>
+<div style="position:absolute;left:8px;top:8px;font-size:12px;color:#E5E9EF">θ = −90°</div>
+<div style="position:absolute;right:8px;top:8px;font-size:12px;color:#E5E9EF">θ = +90° (limit)</div>
+</div>
+<div style="display:flex;gap:24px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500;line-height:1.6">
+<div>{{s5a}}</div><div>{{s5b}}</div><div>{{s5c}}</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<!-- SIM for stages 1, 3, 4 -->
+<sc-if value="{{showSim}}" hint-placeholder-val="{{ true }}">
+<div style="{{cardStyle}}">
+<sc-if value="{{showSimControls}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font-size:18px;font-weight:600">{{simTitle}}</div>
+<div style="display:flex;gap:24px;flex-wrap:wrap">
+<div style="flex:1 1 220px;display:flex;flex-direction:column;gap:4px">
+<div style="display:flex;justify-content:space-between"><label for="w3" style="font-size:15px;font-weight:500">Wavelength λ</label><span style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500">{{lamLabel}}</span></div>
+<div style="height:8px;border-radius:4px;background:{{lamCol}}"></div>
+<input id="w3" type="range" min="400" max="700" step="1" value="{{lam}}" onInput="{{onLam}}" onChange="{{onLam}}">
+</div>
+<div style="flex:1 1 220px;display:flex;flex-direction:column;gap:4px">
+<div style="display:flex;justify-content:space-between"><label for="l3" style="font-size:15px;font-weight:500">Lines per mm</label><span style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500">{{linesLabel}}</span></div>
+<input id="l3" type="range" min="200" max="600" step="20" value="{{lines}}" onInput="{{onLines}}" onChange="{{onLines}}">
+</div>
+<div style="flex:1 1 220px;display:flex;flex-direction:column;gap:6px">
+<div style="font-size:15px;font-weight:500">Order n</div>
+<div style="display:flex;align-items:center;gap:10px">
+<button onClick="{{prevN}}" disabled="{{prevDisabled}}" aria-label="Previous order" style="width:44px;height:44px;border:1px solid #17202A;background:#fff;border-radius:8px;font-size:20px;color:#17202A">−</button>
+<div style="width:70px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:500">n = {{nSel}}</div>
+<button onClick="{{nextN}}" disabled="{{nextDisabled}}" aria-label="Next order" style="width:44px;height:44px;border:1px solid #17202A;background:#fff;border-radius:8px;font-size:20px;color:#17202A">+</button>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+<div style="display:flex;height:80px;background:#000;border-radius:6px;overflow:hidden">
+<sc-for list="{{strips}}" as="s" hint-placeholder-count="30">
+<div style="{{s.st}}"></div>
+</sc-for>
+</div>
+<div style="position:relative;height:30px">
+<sc-for list="{{marks}}" as="m" hint-placeholder-count="5">
+<div style="{{m.st}}">{{m.t}}</div>
+</sc-for>
+</div>
+<div style="display:flex;align-items:flex-end;height:70px;border-bottom:1px solid #17202A;background:#F7F8F6">
+<sc-for list="{{bars}}" as="b" hint-placeholder-count="30">
+<div style="{{b.st}}"></div>
+</sc-for>
+</div>
+<div style="font-size:13px;color:#4B5563">Screen 1.0 m away, ±80 cm shown. Bars show relative brightness.</div>
+<sc-if value="{{showSimControls}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:6px;background:#17202A;color:#fff;border-radius:8px;padding:16px;font-family:'IBM Plex Mono',monospace;font-size:14px;line-height:1.6">
+<sc-for list="{{simWork}}" as="sw" hint-placeholder-count="4">
+<div>{{sw.t}}</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{isS4}}" hint-placeholder-val="{{ false }}">
+<div style="font-size:14px;line-height:1.5;color:#4B5563">Use this to check your answers: set λ, lines per mm and n to match a question, then compare θ.</div>
+</sc-if>
+</div>
+</sc-if>
+
+<!-- PRACTICE heading -->
+<sc-if value="{{isPractice}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<sc-for list="{{ptabs}}" as="pt" hint-placeholder-count="3">
+<button onClick="{{pt.go}}" aria-pressed="{{pt.on}}" style="{{pt.st}}">{{pt.t}}</button>
+</sc-for>
+</div>
+<div style="background:#17202A;color:#fff;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:8px">
+<div style="font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#C9D1DC">Formula reminder</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:500">{{pFormula}}</div>
+<div style="font-size:14px;line-height:1.5;color:#E5E9EF">{{pNote}}</div>
+<sc-if value="{{pHasLab}}" hint-placeholder-val="{{ false }}">
+<button onClick="{{goSim}}" style="align-self:flex-start;min-height:44px;padding:0;border:none;background:transparent;color:#FFFFFF;font-size:14px;font-weight:500;text-decoration:underline">Open the double-slit lab to experiment</button>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<!-- QUESTIONS -->
+<div style="display:flex;flex-direction:column;gap:16px">
+<sc-if value="{{hasQs}}" hint-placeholder-val="{{ true }}">
+<div style="font-size:20px;font-weight:600">{{qHeading}}</div>
+</sc-if>
+<sc-for list="{{qs}}" as="q" hint-placeholder-count="3">
+<div style="display:flex;flex-direction:column;gap:12px">
+<sc-if value="{{q.hasGroup}}" hint-placeholder-val="{{ false }}">
+<div style="background:#17202A;color:#fff;border-radius:12px;padding:16px 20px;display:flex;flex-direction:column;gap:10px;margin-top:8px">
+<div style="font-size:18px;font-weight:600">{{q.groupTitle}}</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<span style="font-size:13px;border:1px solid #6B7686;border-radius:6px;padding:4px 10px">{{q.groupFixed}}</span>
+<span style="font-size:13px;font-weight:600;background:#FFFFFF;color:#17202A;border-radius:6px;padding:4px 10px">{{q.groupVarying}}</span>
+</div>
+</div>
+</sc-if>
+<div style="{{cardStyle}}">
+<div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap">
+<span style="font-weight:600;font-size:15px">{{q.num}}</span>
+<sc-if value="{{q.hasLevel}}" hint-placeholder-val="{{ true }}">
+<span style="font-size:12px;font-weight:500;border:1px solid #17202A;border-radius:6px;padding:2px 8px">{{q.level}}</span>
+</sc-if>
+<sc-if value="{{q.correct}}" hint-placeholder-val="{{ false }}">
+<span style="font-size:13px;font-weight:600;color:#14532D">Answered correctly</span>
+</sc-if>
+</div>
+<div style="font-size:16px;line-height:1.6;white-space:pre-line">{{q.text}}</div>
+<sc-if value="{{q.hasFig}}" hint-placeholder-val="{{ false }}">
+<div style="overflow-x:auto">
+<div style="position:relative;width:100%;min-width:420px;max-width:560px;aspect-ratio:560 / 260;background:#0B1220;border-radius:8px;overflow:hidden">
+<sc-for list="{{q.fig}}" as="fg" hint-placeholder-count="20">
+<div style="{{fg.st}}">{{fg.t}}</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{q.padAllowed}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:10px">
+<button onClick="{{q.padToggle}}" aria-expanded="{{q.padOpen}}" style="align-self:flex-start;min-height:44px;padding:0 16px;border:1px solid #17202A;background:#fff;border-radius:8px;font-size:14px;font-weight:500;color:#17202A">{{q.padBtn}}</button>
+<sc-if value="{{q.padOpen}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+<button onClick="{{q.tPen}}" aria-pressed="{{q.penOn}}" style="{{q.penSt}}">Pen</button>
+<button onClick="{{q.tErase}}" aria-pressed="{{q.eraseOn}}" style="{{q.eraseSt}}">Eraser</button>
+<button onClick="{{q.cK}}" aria-label="Black ink" aria-pressed="{{q.kOn}}" style="{{q.kSt}}"></button>
+<button onClick="{{q.cB}}" aria-label="Blue ink" aria-pressed="{{q.bOn}}" style="{{q.bSt}}"></button>
+<button onClick="{{q.cR}}" aria-label="Red ink" aria-pressed="{{q.rOn}}" style="{{q.rSt}}"></button>
+<button onClick="{{q.undo}}" disabled="{{q.noInk}}" style="min-height:44px;padding:0 14px;border:1px solid #17202A;background:#fff;border-radius:8px;font-size:14px;color:#17202A">Undo</button>
+<button onClick="{{q.clearInk}}" disabled="{{q.noInk}}" style="min-height:44px;padding:0 14px;border:1px solid #17202A;background:#fff;border-radius:8px;font-size:14px;color:#17202A">Clear</button>
+<button onClick="{{q.tFinger}}" aria-pressed="{{q.fingerOn}}" style="{{q.fingerSt}}">Finger draws: {{q.fingerTxt}}</button>
+</div>
+<svg aria-label="Working space. Write with Apple Pencil." style="display:block;width:100%;height:280px;touch-action:none;user-select:none;-webkit-user-select:none;background-color:#fff;background-image:linear-gradient(#E3E7EC 1px,transparent 1px);background-size:100% 32px;border:1px solid #17202A;border-radius:8px;cursor:crosshair" onPointerDown="{{q.pDown}}" onPointerMove="{{q.pMove}}" onPointerUp="{{q.pUp}}" onPointerCancel="{{q.pUp}}">
+<path d="{{q.dK}}" fill="none" stroke="#17202A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="{{q.dB}}" fill="none" stroke="#1D4ED8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="{{q.dR}}" fill="none" stroke="#C2410C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<div style="font-size:13px;color:#4B5563">Write with Apple Pencil. Finger touches do not mark the page, so your palm is safe, and you can scroll by touching outside the box.</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+<sc-if value="{{q.isMc}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{q.options}}" as="o" hint-placeholder-count="4">
+<button onClick="{{o.pick}}" style="{{o.st}}">{{o.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{q.isNum}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+<input type="text" inputmode="decimal" aria-label="{{q.label}}" value="{{q.val}}" onInput="{{q.onInput}}" onChange="{{q.onInput}}" style="width:140px;height:44px;box-sizing:border-box;border:1px solid #17202A;border-radius:8px;padding:0 12px;font-family:'IBM Plex Mono',monospace;font-size:16px">
+<span style="font-size:15px;font-weight:500">{{q.unit}}</span>
+<button onClick="{{q.check}}" style="min-height:44px;padding:0 20px;border:none;border-radius:8px;background:#1D4ED8;color:#fff;font-size:15px;font-weight:500">Check</button>
+</div>
+</sc-if>
+<sc-if value="{{q.hasFb}}" hint-placeholder-val="{{ false }}">
+<div style="{{q.fbStyle}}">{{q.fbText}}</div>
+</sc-if>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button onClick="{{q.toggleHint}}" style="min-height:44px;padding:0 16px;border:1px solid #17202A;background:#fff;border-radius:8px;font-size:14px;color:#17202A">{{q.hintBtn}}</button>
+<button onClick="{{q.toggleSol}}" style="min-height:44px;padding:0 16px;border:1px solid #17202A;background:#fff;border-radius:8px;font-size:14px;color:#17202A">{{q.solBtn}}</button>
+</div>
+<sc-if value="{{q.hintOpen}}" hint-placeholder-val="{{ false }}">
+<div style="font-size:15px;line-height:1.5;background:#EEF0EC;border-radius:8px;padding:12px 14px"><strong>Hint:</strong> {{q.hint}}</div>
+</sc-if>
+<sc-if value="{{q.solOpen}}" hint-placeholder-val="{{ false }}">
+<div style="font-family:'IBM Plex Mono',monospace;font-size:14px;line-height:1.7;white-space:pre-line;background:#F7F8F6;border:1px solid #D5D9D2;border-radius:8px;padding:14px">{{q.solution}}</div>
+</sc-if>
+</div>
+<sc-if value="{{q.showNote}}" hint-placeholder-val="{{ false }}">
+<div style="background:#DDEFE2;color:#14532D;border-radius:8px;padding:14px 16px;font-size:15px;line-height:1.5"><strong>Pattern:</strong> {{q.groupNote}}</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+
+<!-- Lesson nav -->
+<sc-if value="{{isLesson}}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center">
+<button onClick="{{backStage}}" disabled="{{backDisabled}}" style="min-height:48px;padding:0 24px;border:1px solid #17202A;background:#fff;border-radius:8px;font-size:16px;font-weight:500;color:#17202A">Back</button>
+<div style="font-size:14px;color:#4B5563;flex:1 1 200px;text-align:center">{{navNote}}</div>
+<button onClick="{{nextStage}}" disabled="{{nextStageDisabled}}" style="min-height:48px;padding:0 24px;border:none;background:#1D4ED8;color:#fff;border-radius:8px;font-size:16px;font-weight:500">{{nextLabel}}</button>
+</div>
+</sc-if>
+
+<!-- Practice report -->
+<sc-if value="{{isPractice}}" hint-placeholder-val="{{ false }}">
+<div style="{{cardStyle}}">
+<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+<div style="font-size:20px;font-weight:600">Your score report</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:500">{{totalScore}}</div>
+</div>
+<sc-for list="{{report}}" as="rp" hint-placeholder-count="3">
+<div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid #D5D9D2;padding-top:12px">
+<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+<div style="font-size:15px;font-weight:600">{{rp.name}}</div>
+<div style="font-size:14px;font-family:'IBM Plex Mono',monospace">{{rp.score}} · {{rp.status}}</div>
+</div>
+<div style="height:10px;background:#EEF0EC;border-radius:5px;overflow:hidden"><div style="{{rp.bar}}"></div></div>
+<sc-if value="{{rp.revisit}}" hint-placeholder-val="{{ false }}">
+<button onClick="{{rp.go}}" style="align-self:flex-start;min-height:44px;padding:0 16px;border:1px solid #17202A;background:#fff;border-radius:8px;font-size:14px;color:#17202A">{{rp.goLabel}}</button>
+</sc-if>
+</div>
+</sc-for>
+<button onClick="{{resetPractice}}" style="align-self:flex-start;min-height:44px;padding:0 16px;border:1px solid #17202A;background:#fff;border-radius:8px;font-size:14px;color:#17202A">Clear answers in this tab</button>
+</div>
+</sc-if>
+
+</div>
+</div>
+</template>
+<script>
+
+(function () {
+  var EVENTS = { onclick: 'click', oninput: 'input', onchange: 'change', onpointerdown: 'pointerdown', onpointermove: 'pointermove', onpointerup: 'pointerup', onpointercancel: 'pointercancel' };
+  var VOID = { input: 1, br: 1, hr: 1, img: 1, meta: 1, link: 1 };
+  var HOLE = /^\{\{\s*([^}\s]+)\s*\}\}$/;
+  var HOLES = /\{\{\s*([^}\s]+)\s*\}\}/g;
+  function get(scope, path) {
+    if (path === 'true') return true;
+    if (path === 'false') return false;
+    if (!isNaN(Number(path))) return Number(path);
+    var v = scope, parts = path.split('.');
+    for (var i = 0; i < parts.length; i++) { if (v == null) return undefined; v = v[parts[i]]; }
+    return v;
+  }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function escAttr(s) { return esc(s).replace(/"/g, '&quot;'); }
+  function interp(str, scope) { return str.replace(HOLES, function (m, p) { var v = get(scope, p); return v == null ? '' : String(v); }); }
+
+  var handlers = {}, eid = 0;
+  function renderNode(node, scope, out) {
+    if (node.nodeType === 3) { out.push(esc(interp(node.nodeValue, scope))); return; }
+    if (node.nodeType !== 1) return;
+    var tag = node.tagName.toLowerCase();
+    var kids = function (sc) { for (var c = node.firstChild; c; c = c.nextSibling) renderNode(c, sc, out); };
+    if (tag === 'sc-if') {
+      var m = HOLE.exec(node.getAttribute('value') || '');
+      if (m && get(scope, m[1])) kids(scope);
+      return;
+    }
+    if (tag === 'sc-for') {
+      var lm = HOLE.exec(node.getAttribute('list') || '');
+      var list = (lm && get(scope, lm[1])) || [];
+      var as = node.getAttribute('as');
+      for (var i = 0; i < list.length; i++) {
+        var sc = Object.create(scope); sc[as] = list[i]; sc.$index = i; kids(sc);
+      }
+      return;
+    }
+    var attrs = '', hmap = null;
+    for (var a = 0; a < node.attributes.length; a++) {
+      var at = node.attributes[a], name = at.name, val = at.value;
+      if (name.indexOf('hint-') === 0 || name === 'data-props') continue;
+      var hm = HOLE.exec(val);
+      if (EVENTS[name]) {
+        if (hm) { var fn = get(scope, hm[1]); if (typeof fn === 'function') { hmap = hmap || {}; hmap[name] = fn; } }
+        continue;
+      }
+      if (hm) {
+        var raw = get(scope, hm[1]);
+        if (name.indexOf('aria-') === 0 || name.indexOf('data-') === 0) { attrs += ' ' + name + '="' + escAttr(String(raw)) + '"'; }
+        else if (raw === false || raw == null) { /* omit */ }
+        else if (raw === true) { attrs += ' ' + name + '=""'; }
+        else { attrs += ' ' + name + '="' + escAttr(String(raw)) + '"'; }
+      } else {
+        attrs += ' ' + name + '="' + escAttr(interp(val, scope)) + '"';
+      }
+    }
+    if (hmap) { var id = ++eid; handlers[id] = hmap; attrs += ' data-eid="' + id + '"'; }
+    out.push('<' + tag + attrs + '>');
+    if (!VOID[tag]) { kids(scope); out.push('</' + tag + '>'); }
+  }
+
+  function syncAttrs(o, n) {
+    var i, name;
+    for (i = o.attributes.length - 1; i >= 0; i--) { name = o.attributes[i].name; if (!n.hasAttribute(name)) o.removeAttribute(name); }
+    for (i = 0; i < n.attributes.length; i++) {
+      name = n.attributes[i].name;
+      if (o.getAttribute(name) !== n.attributes[i].value) o.setAttribute(name, n.attributes[i].value);
+    }
+    if (o.tagName === 'INPUT') {
+      var nv = n.getAttribute('value');
+      if (nv != null && o.value !== nv) o.value = nv;
+    }
+  }
+  function patchChildren(o, n) {
+    var nk = Array.prototype.slice.call(n.childNodes), ok = Array.prototype.slice.call(o.childNodes), i;
+    for (i = 0; i < nk.length; i++) {
+      var a = nk[i], b = ok[i];
+      if (!b) { o.appendChild(a); continue; }
+      if (a.nodeType !== b.nodeType || (a.nodeType === 1 && a.tagName !== b.tagName)) { o.replaceChild(a, b); continue; }
+      if (a.nodeType === 3) { if (b.nodeValue !== a.nodeValue) b.nodeValue = a.nodeValue; continue; }
+      if (a.nodeType === 1) { syncAttrs(b, a); patchChildren(b, a); }
+    }
+    for (i = ok.length - 1; i >= nk.length; i--) o.removeChild(ok[i]);
+  }
+
+  window.mountDC = function (Cls, tplEl, root, props) {
+    var comp = new Cls(props || {});
+    var tpl = tplEl.content;
+    comp._render = function () {
+      handlers = {}; eid = 0;
+      var out = [], scope = comp.renderVals();
+      for (var c = tpl.firstChild; c; c = c.nextSibling) renderNode(c, scope, out);
+      var tmp = document.createElement('div');
+      tmp.innerHTML = out.join('');
+      patchChildren(root, tmp);
+    };
+    Object.keys(EVENTS).forEach(function (k) {
+      var type = EVENTS[k];
+      root.addEventListener(type, function (ev) {
+        var el = ev.target;
+        while (el && el !== root) {
+          var id = el.dataset && el.dataset.eid;
+          if (id !== undefined && handlers[id] && handlers[id]['on' + type]) {
+            var fn = handlers[id]['on' + type];
+            fn({ type: ev.type, target: ev.target, currentTarget: el, clientX: ev.clientX, clientY: ev.clientY, pointerId: ev.pointerId, pointerType: ev.pointerType, buttons: ev.buttons, pressure: ev.pressure, nativeEvent: ev, preventDefault: function () { ev.preventDefault(); }, stopPropagation: function () { ev.stopPropagation(); } });
+            return;
+          }
+          el = el.parentNode;
+        }
+      });
+    });
+    comp._render();
+    return comp;
+  };
+})();
+
+
+// ---- tiny template runtime (no dependencies) ----
+class DCLogic {
+  constructor(props) { this.props = props || {}; this.state = {}; this._q = false; }
+  setState(patch) {
+    Object.assign(this.state, patch);
+    if (!this._q) { this._q = true; queueMicrotask(() => { this._q = false; this._render && this._render(); }); }
+  }
+  forceUpdate() { this.setState({}); }
+}
+
+
+class Component extends DCLogic {
+  constructor(...args) {
+    super(...args);
+    this.state = { view: 'lesson', stage: 1, ptab: 'grating', ans: {}, hints: {}, sols: {}, N: 8, lines: 300, lam: 600, D: 1, n: 1, sym: null, dn: 1, tool: 'pen', color: 'k', finger: false, ink: {}, cur: null, pads: {}, lab: { mode: 'slit', lambda: 600, a: 0.5, lines: 300, D: 2, N: 8, order: 1 } };
+  }
+
+  // ---- handwriting helpers ----
+  pathD(pts) {
+    if (!pts || !pts.length) return '';
+    const f = (v) => v.toFixed(1);
+    if (pts.length === 1) return 'M' + f(pts[0][0]) + ' ' + f(pts[0][1]) + ' L' + f(pts[0][0] + 0.1) + ' ' + f(pts[0][1]);
+    let d = 'M' + f(pts[0][0]) + ' ' + f(pts[0][1]);
+    for (let i = 1; i < pts.length - 1; i++) {
+      const mx = (pts[i][0] + pts[i + 1][0]) / 2, my = (pts[i][1] + pts[i + 1][1]) / 2;
+      d += ' Q' + f(pts[i][0]) + ' ' + f(pts[i][1]) + ' ' + f(mx) + ' ' + f(my);
+    }
+    const l = pts[pts.length - 1];
+    d += ' L' + f(l[0]) + ' ' + f(l[1]);
+    return d;
+  }
+  penOk(e) {
+    const t = e.pointerType || (e.nativeEvent && e.nativeEvent.pointerType) || 'mouse';
+    return t !== 'touch' || this.state.finger;
+  }
+  padPoint(e) {
+    const r = e.currentTarget.getBoundingClientRect();
+    return [e.clientX - r.left, e.clientY - r.top];
+  }
+  eraseAt(qid, pt) {
+    const list = (this.state.ink[qid] || []);
+    const keep = list.filter((sk) => !sk.pts.some((p) => Math.hypot(p[0] - pt[0], p[1] - pt[1]) < 14));
+    if (keep.length !== list.length) this.setState({ ink: Object.assign({}, this.state.ink, { [qid]: keep }) });
+  }
+
+  sup(str) {
+    const m = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻' };
+    return String(str).split('').map((c) => m[c] || c).join('');
+  }
+  sci(x, dig) {
+    const n = dig || 3;
+    let e = Math.floor(Math.log10(Math.abs(x)));
+    let mant = x / Math.pow(10, e);
+    if (Number(mant.toFixed(n - 1)) >= 10) { mant = mant / 10; e += 1; }
+    return mant.toFixed(n - 1) + ' × 10' + this.sup(e);
+  }
+  rgb(l) {
+    let r = 0, g = 0, b = 0;
+    if (l < 440) { r = -(l - 440) / 60; b = 1; }
+    else if (l < 490) { g = (l - 440) / 50; b = 1; }
+    else if (l < 510) { g = 1; b = -(l - 510) / 20; }
+    else if (l < 580) { r = (l - 510) / 70; g = 1; }
+    else if (l < 645) { r = 1; g = -(l - 645) / 65; }
+    else { r = 1; }
+    const f = l < 420 ? 0.35 + 0.65 * (l - 380) / 40 : (l > 700 ? 0.35 + 0.65 * (780 - l) / 80 : 1);
+    return [Math.min(1, r * f), Math.min(1, g * f), Math.min(1, b * f)];
+  }
+
+  bank() {
+    const L3 = 'Level 3', L4 = 'Level 4', L5 = 'Level 5';
+    return [
+      // ---------- Lesson checks ----------
+      { id: 'c1', set: 'st1', type: 'mc', text: 'You increase the number of slits N from 2 to 20. Everything else stays the same. What happens to the bright spots?',
+        options: ['They move further apart.', 'They stay in the same places but become sharper and brighter.', 'They move closer together.', 'More bright spots appear.'], correct: 1,
+        hint: 'Drag the slider and watch where the spot positions are, then how wide each one is.',
+        sol: 'The positions depend on the slit spacing d and the wavelength, not on N.\nMore slits make each spot narrower and brighter.' },
+
+      { id: 'c2a', set: 'st2', type: 'num', text: 'A grating has 500 lines per mm. Find the spacing d in µm.\n(1 µm = 10⁻⁶ m)', ans: 2.0, unit: 'µm',
+        hint: 'd = 1 ÷ 500 mm. Then 1 mm = 1000 µm.',
+        sol: 'd = 1 ÷ 500 mm = 0.00200 mm\n0.00200 mm × 1000 = 2.0 µm\n(= 2.0 × 10⁻⁶ m)' },
+      { id: 'c2b', set: 'st2', type: 'num', text: 'A grating has 1200 lines per cm. Find d in µm.', ans: 8.33, unit: 'µm',
+        hint: 'The label says per cm. d = 1 ÷ 1200 cm, and 1 cm = 10 000 µm.',
+        sol: 'd = 1 ÷ 1200 cm = 8.33 × 10⁻⁴ cm\n1 cm = 10 000 µm, so d = 8.33 × 10⁻⁴ × 10 000 = 8.33 µm',
+        traps: [[0.833, 'Check the unit: 1 cm is 10 000 µm, not 1000 µm.']] },
+      { id: 'c2c', set: 'st2', type: 'num', text: 'A grating has slit spacing d = 1.60 µm. How many lines per mm does it have?', ans: 625, unit: 'lines per mm',
+        hint: 'Change d to mm first (1 µm = 10⁻³ mm), then lines per mm = 1 ÷ d.',
+        sol: 'd = 1.60 µm = 1.60 × 10⁻³ mm\nlines per mm = 1 ÷ (1.60 × 10⁻³) = 625' },
+
+      { id: 'c3a', set: 'st3', type: 'mc', text: 'In d sin θ = nλ, the angle θ is measured between…',
+        options: ['the straight-through direction (n = 0) and the direction of the nth bright spot.', 'the grating and the screen.', 'two neighbouring bright spots.', 'the incoming light and the surface of the grating.'], correct: 0,
+        hint: 'Look at the symbol card: θ for n = 0 is zero.',
+        sol: 'θ is the angle from the straight-through direction to the nth bright spot.\nFor the central spot n = 0, so θ = 0.' },
+      { id: 'c3b', set: 'st3', type: 'mc', text: 'A problem gives lines per mm, the wavelength and the order n, and asks for the angle. Which rearrangement do you use?',
+        options: ['sin θ = nλ ÷ d', 'sin θ = d ÷ (nλ)', 'sin θ = nλd', 'sin θ = λ ÷ (nd)'], correct: 0,
+        hint: 'Divide both sides of d sin θ = nλ by d.',
+        sol: 'd sin θ = nλ\nDivide both sides by d: sin θ = nλ ÷ d' },
+
+      { id: 'k1a', set: 'st4', group: 'K1', type: 'num', text: 'Light of wavelength 589 nm falls normally on a grating with 500 lines per mm. The screen is 1.50 m from the grating.\n\n(a) Find the grating spacing d in µm.', ans: 2.0, unit: 'µm', tol: 0.02, fig: { n: 1, ang: 'θ₁ = ?', info: ['500 lines per mm', 'λ = 589 nm'], D: 'D = 1.50 m', y: 'y = ?' },
+        hint: 'd = 1 ÷ 500 mm, and 1 mm = 1000 µm.', sol: 'd = (1 ÷ 500) mm = 2.00 × 10⁻³ mm\nd = 2.00 × 10⁻⁶ m = 2.0 µm' },
+      { id: 'k1b', set: 'st4', group: 'K1', type: 'num', text: '(b) Find the angle θ of the 1st-order (n = 1) bright fringe.', ans: 17.13, unit: '°', tol: 0.015,
+        hint: 'Use d sin θ = nλ with d in metres and λ = 589 × 10⁻⁹ m.', sol: 'sin θ = nλ ÷ d = (1)(5.89 × 10⁻⁷) ÷ (2.00 × 10⁻⁶) = 0.2945\nθ = sin⁻¹(0.2945) = 17.1°' },
+      { id: 'k1c', set: 'st4', group: 'K1', type: 'num', text: '(c) Find the distance y on the screen between the central bright fringe and the 1st-order bright fringe, in metres.', ans: 0.462, unit: 'm', tol: 0.02,
+        hint: 'Use the right-angled triangle: y = D tan θ. Keep θ unrounded on your calculator.', sol: 'y = D tan θ = (1.50) tan 17.13°\ny = 0.462 m', traps: [[0.4418, 'That is D sin θ. Use tan θ, because y and D are the two sides of the right-angled triangle.']] },
+      { id: 'k2a', set: 'st4', group: 'K2', type: 'num', text: 'Light of wavelength 650 nm falls normally on a grating with 400 lines per mm. The screen is 1.00 m away. This time we look at the 2nd-order fringe.\n\n(a) Find the grating spacing d in µm.', ans: 2.5, unit: 'µm', tol: 0.02, fig: { n: 2, ang: 'θ₂ = ?', info: ['400 lines per mm', 'λ = 650 nm'], D: 'D = 1.00 m', y: 'y = ?' },
+        hint: 'd = 1 ÷ 400 mm.', sol: 'd = (1 ÷ 400) mm = 2.50 × 10⁻³ mm\nd = 2.50 × 10⁻⁶ m = 2.5 µm' },
+      { id: 'k2b', set: 'st4', group: 'K2', type: 'num', text: '(b) Find the angle θ of the 2nd-order (n = 2) bright fringe.', ans: 31.33, unit: '°', tol: 0.015,
+        hint: 'Now n = 2. sin θ = nλ ÷ d.', sol: 'sin θ = (2)(6.50 × 10⁻⁷) ÷ (2.50 × 10⁻⁶) = 0.520\nθ = sin⁻¹(0.520) = 31.3°' },
+      { id: 'k2c', set: 'st4', group: 'K2', type: 'num', text: '(c) Find the distance y on the screen between the central bright fringe and the 2nd-order bright fringe, in metres.', ans: 0.609, unit: 'm', tol: 0.02,
+        hint: 'y = D tan θ. At this larger angle tan θ and sin θ are noticeably different.', sol: 'y = D tan θ = (1.00) tan 31.33°\ny = 0.609 m', traps: [[0.52, 'That is D sin θ. Use tan θ. At a large angle like this, sin θ and tan θ are quite different.']] },
+      { id: 'c5a', set: 'st5', type: 'num', text: 'A grating has 300 lines per mm. Light of wavelength 600 nm is used. Find the highest order n_max.', ans: 5, unit: '', tol: 0.001,
+        hint: 'd = 1 ÷ 300 mm = 3.33 µm. Work out d ÷ λ and round down.',
+        sol: 'd = 3.33 × 10⁻⁶ m\nd ÷ λ = 3.33 × 10⁻⁶ ÷ 6.00 × 10⁻⁷ = 5.56\nn < 5.56, so n_max = 5' },
+      { id: 'c5b', set: 'st5', type: 'num', text: 'For the same grating and light, how many bright spots appear on the screen in total, including the centre?', ans: 11, unit: '', tol: 0.001,
+        hint: 'Spots on each side: 1 to n_max. Then add the centre.',
+        sol: 'Total = 2n_max + 1 = 2(5) + 1 = 11' },
+      { id: 'c5c', set: 'st5', type: 'mc', text: 'For a certain grating and light, d ÷ λ works out to exactly 4.00. What is n_max?',
+        options: ['3', '4', '5', '8'], correct: 0,
+        hint: 'The rule is n < d ÷ λ, strictly less than.',
+        sol: 'n < 4.00, so n cannot be 4.\nThe n = 4 spot would sit at θ = 90°, so it is not seen. n_max = 3.' },
+
+      // ---------- Stage 5 derivation (guided) ----------
+      { id: 'dv1', set: 'derive', type: 'mc', title: 'Step 1: the biggest possible angle',
+        text: 'As n increases, the bright spots move further from the centre. The largest angle possible is when the light would travel along the plane of the grating. What is that angle θ?',
+        options: ['0°', '45°', '90°', '180°'], correct: 2, result: 'θ cannot reach beyond 90°',
+        hint: 'θ is measured from the straight-through direction. The grating plate is at right angles to that direction.' },
+      { id: 'dv2', set: 'derive', type: 'mc', title: 'Step 2: what this means for sin θ',
+        text: 'sin 90° = 1. A bright spot at exactly 90° would run along the grating and never reach the screen. So for every bright spot we can see, sin θ must be ___ 1.',
+        options: ['less than', 'greater than', 'exactly equal to', 'unrelated to'], correct: 0, result: 'sin θ < 1',
+        hint: 'The spot must be at an angle smaller than 90°.' },
+      { id: 'dv3', set: 'derive', type: 'mc', title: 'Step 3: bring in the formula',
+        text: 'From d sin θ = nλ we get sin θ = nλ ÷ d. Replace sin θ by nλ ÷ d in "sin θ < 1". What do you get?',
+        options: ['nλ ÷ d < 1', 'nλd < 1', 'd ÷ (nλ) < 1', 'n ÷ (λd) < 1'], correct: 0, result: 'nλ / d < 1',
+        hint: 'Only sin θ changes. Write nλ ÷ d where sin θ was.' },
+      { id: 'dv4', set: 'derive', type: 'mc', title: 'Step 4: make n the subject',
+        text: 'Multiply both sides of nλ ÷ d < 1 by d ÷ λ. Both d and λ are positive, so the "<" sign stays. What is the result?',
+        options: ['n < d ÷ λ', 'n < λ ÷ d', 'n > d ÷ λ', 'n < dλ'], correct: 0, result: 'n < d / λ',
+        hint: 'On the left, (nλ ÷ d) × (d ÷ λ) leaves just n.' },
+      { id: 'dv5', set: 'derive', type: 'mc', title: 'Step 5: n must be a whole number',
+        text: 'n counts the bright spots, so it must be a whole number. What is the highest order n_max?',
+        options: ['The largest whole number smaller than d ÷ λ', 'd ÷ λ rounded up', 'Exactly d ÷ λ', 'Always 1'], correct: 0, result: 'n_max = largest whole number < d / λ',
+        hint: 'n must be strictly less than d ÷ λ. If d ÷ λ is exactly 4, can n be 4?' },
+
+      // ---------- Practice: grating ----------
+      { id: 'g1', set: 'grating', level: L3, skill: 'd', type: 'num', text: 'A grating has 400 lines per mm. Find the slit spacing d in µm.', ans: 2.5, unit: 'µm',
+        hint: 'd = 1 ÷ 400 mm, and 1 mm = 1000 µm.', sol: 'd = 1 ÷ 400 mm = 2.5 × 10⁻³ mm = 2.5 µm' },
+      { id: 'g2', set: 'grating', level: L3, skill: 'd', type: 'num', text: 'A grating has slit spacing 1.25 µm. How many lines per mm does it have?', ans: 800, unit: 'lines per mm',
+        hint: '1.25 µm = 1.25 × 10⁻³ mm. Then lines per mm = 1 ÷ d.', sol: 'd = 1.25 × 10⁻³ mm\nlines per mm = 1 ÷ (1.25 × 10⁻³) = 800' },
+      { id: 'g3', set: 'grating', fig: { n: 2, ang: 'θ₂ = ?', info: ['d = 2.0 µm', 'λ = 500 nm'] }, level: L3, skill: 'formula', type: 'num', text: 'A grating has d = 2.0 µm. Light of wavelength 500 nm is used. Find the angle of the 2nd-order bright spot.', ans: 30, unit: '°', tol: 0.015,
+        hint: 'sin θ = nλ ÷ d with n = 2.', sol: 'sin θ = (2)(5.00 × 10⁻⁷) ÷ (2.0 × 10⁻⁶) = 0.500\nθ = 30.0°' },
+      { id: 'g4', set: 'grating', level: L3, skill: 'max', type: 'num', text: 'A grating has 200 lines per mm. Light of wavelength 589 nm is used. Find the highest order n_max.', ans: 8, unit: '', tol: 0.001,
+        hint: 'd = 5.00 µm. Work out d ÷ λ and round down.', sol: 'd = 1 ÷ 200 mm = 5.00 × 10⁻⁶ m\nd ÷ λ = 5.00 × 10⁻⁶ ÷ 5.89 × 10⁻⁷ = 8.49\nn_max = 8' },
+      { id: 'g5', set: 'grating', fig: { n: 1, ang: 'θ₁ = 10.5°', info: ['300 lines per mm', 'λ = ?'] }, level: L4, skill: 'formula', type: 'num', text: 'A grating has 300 lines per mm. The first-order bright spot is at 10.5° from the straight-through direction. Find the wavelength in nm.', ans: 607, unit: 'nm', tol: 0.015,
+        hint: 'd = 1 ÷ 300 mm = 3.33 µm. λ = d sin θ ÷ n.', sol: 'd = 3.33 × 10⁻⁶ m\nλ = d sin θ ÷ n = (3.33 × 10⁻⁶)(sin 10.5°) ÷ 1\nλ = 6.07 × 10⁻⁷ m = 607 nm' },
+      { id: 'g6', set: 'grating', fig: { n: 2, ang: 'θ₂ = ?', info: ['500 lines per mm', 'λ = 650 nm'] }, level: L4, skill: 'formula', type: 'num', text: 'Light of wavelength 650 nm falls on a grating with 500 lines per mm. Find the angle of the 2nd-order bright spot.', ans: 40.5, unit: '°', tol: 0.015,
+        hint: 'd = 2.0 µm. sin θ = nλ ÷ d with n = 2.', sol: 'd = 1 ÷ 500 mm = 2.0 × 10⁻⁶ m\nsin θ = (2)(6.50 × 10⁻⁷) ÷ (2.0 × 10⁻⁶) = 0.650\nθ = 40.5°' },
+      { id: 'g7', set: 'grating', level: L4, skill: 'formula', type: 'num', text: 'A grating with 300 lines per mm is lit by light of wavelength 600 nm. A screen is 2.00 m from the grating. How far from the central spot is the first-order spot? (Use y = D tan θ.)', ans: 0.366, unit: 'm', tol: 0.02,
+        hint: 'Find θ first with d sin θ = nλ, then use y = D tan θ.', sol: 'd = 3.33 × 10⁻⁶ m\nsin θ = 6.00 × 10⁻⁷ ÷ 3.33 × 10⁻⁶ = 0.180, θ = 10.4°\ny = D tan θ = 2.00 × tan 10.4° = 0.366 m' },
+      { id: 'g8', set: 'grating', level: L4, skill: 'max', type: 'num', text: 'Light of wavelength 589 nm falls on a grating with 500 lines per mm. How many bright spots appear in total, including the central one?', ans: 7, unit: '', tol: 0.001,
+        hint: 'Find n_max first, then total = 2n_max + 1.', sol: 'd = 2.0 × 10⁻⁶ m\nd ÷ λ = 2.0 × 10⁻⁶ ÷ 5.89 × 10⁻⁷ = 3.40, so n_max = 3\nTotal = 2(3) + 1 = 7' },
+      { id: 'g9', set: 'grating', level: L5, skill: 'formula', type: 'mc', text: 'White light passes through a grating. In the first-order spectrum, which colour appears closest to the central spot?',
+        options: ['Violet', 'Green', 'Red', 'All colours appear at the same place'], correct: 0,
+        hint: 'sin θ = λ ÷ d for n = 1. Which colour has the smallest λ?', sol: 'sin θ = nλ ÷ d, so a smaller λ gives a smaller θ.\nViolet has the smallest wavelength, so it is closest to the centre.' },
+      { id: 'g10', set: 'grating', fig: { n: 3, ang: 'θ₃ = 50.0°', info: ['λ = 600 nm', 'lines per mm = ?'] }, level: L5, skill: 'formula', type: 'num', text: 'Light of wavelength 600 nm produces a third-order bright spot at 50.0°. How many lines per mm does the grating have?', ans: 426, unit: 'lines per mm', tol: 0.015,
+        hint: 'd = nλ ÷ sin θ, then change to mm and take 1 ÷ d.', sol: 'd = nλ ÷ sin θ = (3)(6.00 × 10⁻⁷) ÷ sin 50.0° = 2.35 × 10⁻⁶ m\nd = 2.35 × 10⁻³ mm\nlines per mm = 1 ÷ (2.35 × 10⁻³) = 426' },
+      { id: 'g11', set: 'grating', level: L5, skill: 'max', type: 'mc', text: 'Red light is replaced by blue light. The same grating is used. What happens to the highest order n_max?',
+        options: ['It increases or stays the same.', 'It decreases.', 'It is always zero.', 'It does not depend on the wavelength.'], correct: 0,
+        hint: 'n < d ÷ λ. What happens to d ÷ λ when λ gets smaller?', sol: 'n_max comes from n < d ÷ λ.\nBlue has a smaller λ, so d ÷ λ is larger and n_max increases or stays the same.' },
+
+      // ---------- Practice: double slit ----------
+      { id: 's1', set: 'slit', level: L3, skill: 'spacing', type: 'num', text: 'Light of wavelength 600 nm passes through two slits 0.50 mm apart. The screen is 2.0 m away. Find the fringe spacing Δy in mm.', ans: 2.4, unit: 'mm',
+        hint: 'Δy = λD ÷ a. Use metres for everything.', sol: 'λ = 6.00 × 10⁻⁷ m, a = 5.0 × 10⁻⁴ m, D = 2.0 m\nΔy = λD ÷ a = (6.00 × 10⁻⁷)(2.0) ÷ (5.0 × 10⁻⁴)\nΔy = 2.4 × 10⁻³ m = 2.4 mm' },
+      { id: 's2', set: 'slit', level: L3, skill: 'spacing', type: 'num', text: 'Light of wavelength 500 nm passes through two slits 0.25 mm apart. The screen is 1.5 m away. Find Δy in mm.', ans: 3.0, unit: 'mm',
+        hint: 'Δy = λD ÷ a.', sol: 'Δy = (5.00 × 10⁻⁷)(1.5) ÷ (2.5 × 10⁻⁴) = 3.0 × 10⁻³ m = 3.0 mm' },
+      { id: 's3', set: 'slit', level: L3, skill: 'predict', type: 'mc', text: 'In a double-slit experiment the screen is moved to twice the distance. Nothing else changes. The fringe spacing…',
+        options: ['doubles.', 'halves.', 'stays the same.', 'becomes four times larger.'], correct: 0,
+        hint: 'Δy = λD ÷ a. How is Δy related to D?', sol: 'Δy is proportional to D, so doubling D doubles Δy.' },
+      { id: 's4', set: 'slit', level: L3, skill: 'predict', type: 'mc', text: 'The separation a between the two slits is doubled. Nothing else changes. The fringe spacing…',
+        options: ['halves.', 'doubles.', 'stays the same.', 'becomes four times smaller.'], correct: 0,
+        hint: 'Δy = λD ÷ a. a is on the bottom.', sol: 'Δy is inversely proportional to a, so doubling a halves Δy.' },
+      { id: 's5', set: 'slit', level: L4, skill: 'unknown', type: 'num', text: 'In a double-slit experiment Δy = 1.8 mm, a = 0.40 mm and D = 1.2 m. Find the wavelength in nm.', ans: 600, unit: 'nm', tol: 0.015,
+        hint: 'Rearrange: λ = Δy · a ÷ D.', sol: 'λ = Δy a ÷ D = (1.8 × 10⁻³)(4.0 × 10⁻⁴) ÷ 1.2\nλ = 6.0 × 10⁻⁷ m = 600 nm' },
+      { id: 's6', set: 'slit', level: L4, skill: 'unknown', type: 'num', text: 'Light of wavelength 650 nm is used with a screen 2.5 m away. The fringe spacing is 3.25 mm. Find the slit separation a in mm.', ans: 0.5, unit: 'mm', tol: 0.02,
+        hint: 'Rearrange: a = λD ÷ Δy.', sol: 'a = λD ÷ Δy = (6.50 × 10⁻⁷)(2.5) ÷ (3.25 × 10⁻³)\na = 5.0 × 10⁻⁴ m = 0.50 mm' },
+      { id: 's7', set: 'slit', level: L4, skill: 'spacing', type: 'num', text: 'The centre of the 1st bright fringe and the centre of the 7th bright fringe are 13.5 mm apart. Find the fringe spacing Δy in mm.', ans: 2.25, unit: 'mm', tol: 0.02,
+        hint: 'How many gaps are there between the 1st and the 7th fringe?', sol: 'From the 1st to the 7th fringe there are 6 gaps.\nΔy = 13.5 ÷ 6 = 2.25 mm',
+        traps: [[1.93, 'Count the gaps, not the fringes. Between the 1st and 7th fringes there are 6 gaps.']] },
+      { id: 's8', set: 'slit', level: L4, skill: 'unknown', type: 'num', text: 'Two slits are 0.30 mm apart and the screen is 1.50 m away. The distance from the centre of the 1st bright fringe to the centre of the 5th is 8.0 mm. Find the wavelength in nm.', ans: 400, unit: 'nm', tol: 0.02,
+        hint: 'First find Δy (how many gaps?). Then λ = Δy · a ÷ D.', sol: '4 gaps: Δy = 8.0 ÷ 4 = 2.0 mm\nλ = Δy a ÷ D = (2.0 × 10⁻³)(3.0 × 10⁻⁴) ÷ 1.50\nλ = 4.0 × 10⁻⁷ m = 400 nm' },
+      { id: 's9', set: 'slit', level: L5, skill: 'predict', type: 'mc', text: 'Red light (650 nm) in a double-slit set-up is replaced by blue light (450 nm). Everything else is unchanged. The new fringe spacing is about…',
+        options: ['0.69 times the original.', '1.44 times the original.', '0.45 times the original.', 'the same as the original.'], correct: 0,
+        hint: 'Δy is proportional to λ. Work out 450 ÷ 650.', sol: 'Δy ∝ λ, so new ÷ old = 450 ÷ 650 = 0.69.' },
+      { id: 's10', set: 'slit', level: L5, skill: 'unknown', type: 'num', text: 'The fringe spacing on a screen is 2.4 mm. When the screen is moved 0.50 m further from the slits, the spacing becomes 3.0 mm. Find the original screen distance D.', ans: 2.0, unit: 'm', tol: 0.02,
+        hint: 'Δy is proportional to D, so 2.4 ÷ D = 3.0 ÷ (D + 0.50).', sol: 'Δy ∝ D, so 2.4 ÷ D = 3.0 ÷ (D + 0.50)\n2.4(D + 0.50) = 3.0D\n1.2 = 0.6D, so D = 2.0 m' },
+
+      // ---------- Practice: choose the formula ----------
+      { id: 'm1', set: 'mixed', level: L3, skill: 'choose', type: 'mc', text: 'A laser shines on a card with two narrow slits 0.40 mm apart. Fringes form on a wall 3 m away. Which equation do you use to find the fringe spacing?',
+        options: ['Δy = λD ÷ a', 'd sin θ = nλ', 'n < d ÷ λ', 'v = fλ'], correct: 0,
+        hint: 'Two slits, a screen far away, and a spacing Δy between fringes.', sol: 'Two slits and fringe spacing on a distant screen: use Δy = λD ÷ a.' },
+      { id: 'm2', set: 'mixed', level: L4, skill: 'choose', type: 'mc', text: 'A spectrometer measures the angle of the 2nd-order bright spot from a grating with 600 lines per mm. Which equation do you use to find the wavelength?',
+        options: ['d sin θ = nλ', 'Δy = λD ÷ a', 'v = fλ', 'sin θ = d ÷ (nλ)'], correct: 0,
+        hint: 'You are given an angle and an order number.', sol: 'An angle and an order n point to d sin θ = nλ, with d = 1 ÷ 600 mm.' },
+      { id: 'm3', set: 'mixed', level: L4, skill: 'choose', type: 'mc', text: 'Which statement is correct?',
+        options: ['Δy = λD ÷ a is for two slits with small angles, while d sin θ = nλ is for any angle.', 'Both equations only work for one slit.', 'Δy = λD ÷ a can find the maximum order of a grating.', 'd sin θ = nλ only works if n = 1.'], correct: 0,
+        hint: 'Which one gives the fringe spacing, and which gives the angle of each order?', sol: 'Δy = λD ÷ a needs small angles (D much bigger than a).\nd sin θ = nλ gives the exact angle of each order.' },
+      { id: 'm4', set: 'mixed', level: L5, skill: 'choose', type: 'mc', text: 'A two-slit pattern and a 500-slit grating pattern are made with the same light. Which statement is correct?',
+        options: ['The grating gives much sharper bright spots.', 'The two-slit pattern gives sharper bright spots.', 'Both give identical patterns.', 'The grating gives no bright spots.'], correct: 0,
+        hint: 'Remember Stage 1: what does more slits do to the spots?', sol: 'More slits make the bright spots narrower and brighter, so the 500-slit grating gives much sharper spots.' }
+    ];
+  }
+
+  skillInfo(set) {
+    if (set === 'grating') return [
+      { key: 'd', name: 'Grating spacing d', stage: 3 },
+      { key: 'formula', name: 'Using d sin θ = nλ', stage: 5 },
+      { key: 'max', name: 'Maximum order', stage: 6 }];
+    if (set === 'slit') return [
+      { key: 'spacing', name: 'Fringe spacing Δy', lab: true },
+      { key: 'unknown', name: 'Finding λ, a or D', lab: true },
+      { key: 'predict', name: 'Predicting what changes', lab: true }];
+    return [{ key: 'choose', name: 'Choosing the right formula', stage: 4 }];
+  }
+
+  evaluate(q, st) {
+    // returns {status, fb}
+    if (q.type === 'mc') {
+      return st.sel === q.correct ? { status: 'correct', fb: 'Correct.' } : { status: 'wrong', fb: 'Not quite. Open the hint and try another option.' };
+    }
+    const raw = String(st.val === undefined ? '' : st.val).replace(/,/g, '').trim();
+    const v = parseFloat(raw);
+    if (!raw || isNaN(v)) return { status: 'invalid', fb: 'Type a number first, then press Check.' };
+    const tol = q.tol === undefined ? 0.02 : q.tol;
+    if (Math.abs(v - q.ans) <= tol * Math.abs(q.ans)) return { status: 'correct', fb: 'Correct.' };
+    if (q.traps) {
+      for (const t of q.traps) {
+        if (Math.abs(v - t[0]) <= 0.02 * Math.abs(t[0])) return { status: 'wrong', fb: 'Not quite. ' + t[1] };
+      }
+    }
+    return { status: 'wrong', fb: 'Not quite. Check your units, then open the hint.' };
+  }
+
+  strip(lamNm, lines, N, D, selN) {
+    const half = 0.8;
+    const lam = lamNm * 1e-9;
+    const d = 1e-3 / lines;
+    const c = this.rgb(lamNm);
+    const S = 480;
+    const strips = [], bars = [];
+    const wpx = 2 * half / S;
+    const inten = (x) => {
+      const sinT = x / Math.sqrt(x * x + D * D);
+      const phi = Math.PI * d * sinT / lam;
+      const sp = Math.sin(phi);
+      if (Math.abs(sp) < 1e-6) return 1;
+      const v = Math.sin(N * phi) / (N * sp);
+      return v * v;
+    };
+    for (let i = 0; i < S; i++) {
+      const x = ((i + 0.5) / S * 2 - 1) * half;
+      const I = (inten(x - wpx / 3) + inten(x) + inten(x + wpx / 3)) / 3;
+      const v = Math.pow(I, 0.55);
+      strips.push({ st: 'flex:1 1 0;background:rgb(' + Math.round(c[0] * 255 * v) + ',' + Math.round(c[1] * 255 * v) + ',' + Math.round(c[2] * 255 * v) + ')' });
+      bars.push({ st: 'flex:1 1 0;height:' + (I * 100).toFixed(1) + '%;background:' + (this.props.accent ?? '#1D4ED8') });
+    }
+    const marks = [];
+    let maxShown = 0;
+    for (let n = 1; n < 80; n++) {
+      const sn = n * lam / d;
+      if (sn >= 1) break;
+      if (D * Math.tan(Math.asin(sn)) > half) break;
+      maxShown = n;
+    }
+    const stride = Math.max(1, Math.ceil(maxShown / 6));
+    for (let n = -maxShown; n <= maxShown; n++) {
+      if (n % stride !== 0 && Math.abs(n) !== selN) continue;
+      const y = D * Math.tan(Math.asin(n * lam / d));
+      const sel = Math.abs(n) === selN;
+      marks.push({ st: 'position:absolute;left:' + ((y / half + 1) / 2 * 100).toFixed(2) + '%;top:0;transform:translateX(-50%);font-size:12px;line-height:16px;white-space:nowrap;border-top:2px solid ' + (sel ? '#17202A' : '#9AA3B0') + ';padding-top:4px;color:' + (sel ? '#17202A' : '#4B5563') + ';font-weight:' + (sel ? 600 : 400), t: 'n=' + String(n).replace('-', '−') });
+    }
+    return { strips: strips, bars: bars, marks: marks, maxShown: maxShown };
+  }
+
+  len(y) {
+    const v = Math.abs(y);
+    if (v < 0.05) return (y * 1000).toFixed(v * 1000 < 10 ? 2 : 1) + ' mm';
+    return (y * 100).toFixed(1) + ' cm';
+  }
+
+  groups() {
+    return {
+      K1: { title: 'Check 1: the typical question, 1st order', fixed: 'Given: 500 lines per mm, λ = 589 nm, D = 1.50 m', varying: 'Find: d, then θ, then y', note: 'Every grating question can be done in the same three steps: d first, then θ from d sin θ = nλ, then y = D tan θ.' },
+      K2: { title: 'Check 2: the same three steps, a higher order', fixed: 'Given: 400 lines per mm, λ = 650 nm, D = 1.00 m', varying: 'Find: d, then θ (n = 2), then y', note: 'The order n and the numbers changed, but the three steps did not. Notice that sin θ and tan θ are not the same at a large angle, so always use tan θ for y.' }
+    };
+  }
+
+  // schematic of grating + screen with one highlighted order, drawn in % of a 560 x 260 box
+  schematic(o) {
+    const items = [];
+    const W = 560, H = 260;
+    const X = (v) => (v / W * 100).toFixed(3) + '%';
+    const Y = (v) => (v / H * 100).toFixed(3) + '%';
+    const P = (l, tp, w, h, extra, txt) => items.push({ st: 'position:absolute;left:' + X(l) + ';top:' + Y(tp) + ';' + (w === null ? '' : 'width:' + X(w) + ';') + (h === null ? '' : 'height:' + Y(h) + ';') + (extra || ''), t: txt || '' });
+    const ox = 70, oy = 130, sx = 400;
+    const yo = { 1: 34, 2: 72, 3: 108 };
+    const sel = o.n;
+    P(8, 129, 50, null, 'height:2px;background:#E5E9EF');
+    P(56, 123, null, null, 'width:0;height:0;border-left:9px solid #E5E9EF;border-top:6px solid transparent;border-bottom:6px solid transparent');
+    P(8, 138, null, null, 'font-size:12px;color:#C9D1DC;white-space:nowrap', 'light');
+    P(60, 85, 10, 90, 'background:#6B7686;border:1.5px solid #17202A;box-sizing:border-box');
+    P(44, 180, null, null, 'font-size:12px;color:#C9D1DC;white-space:nowrap', 'grating');
+    P(sx, 16, 12, 230, 'background:#9AA3B0');
+    P(sx - 12, 0, null, null, 'font-size:12px;color:#C9D1DC;white-space:nowrap', 'screen');
+    P(ox, oy - 1, sx - ox, 0, 'border-top:2px dashed #C9D1DC');
+    [3, 2, 1, 0, -1, -2, -3].forEach((n) => {
+      const a = Math.abs(n);
+      const y = oy - (n < 0 ? -1 : 1) * (a === 0 ? 0 : yo[a]);
+      const on = a === sel;
+      P(sx + 16, y - 2, 18, 4, 'background:' + (on ? '#FFFFFF' : '#9AA3B0'));
+      P(sx + 40, y - 9, null, null, 'font-size:12px;line-height:18px;white-space:nowrap;color:' + (on ? '#FFFFFF' : '#C9D1DC') + ';font-weight:' + (on ? 600 : 400), a === 0 ? 'n = 0' : 'n = ' + String(n).replace('-', '−'));
+    });
+    const th = Math.atan2(yo[sel], sx - ox);
+    const len = Math.hypot(sx - ox, yo[sel]);
+    P(ox, oy - 1.5, len, 0, 'height:3px;background:#FFFFFF;transform-origin:0 50%;transform:rotate(' + (-th).toFixed(4) + 'rad)');
+    const cA = Math.cos(th), sA = Math.sin(th), cH = Math.cos(th / 2), sH = Math.sin(th / 2);
+    P(ox - 34, oy - 34, 68, null, 'aspect-ratio:1;border-radius:50%;border:2.5px solid #FFFFFF;box-sizing:border-box;clip-path:polygon(50% 50%,150% 50%,' + (50 + 100 * cH).toFixed(1) + '% ' + (50 - 100 * sH).toFixed(1) + '%,' + (50 + 100 * cA).toFixed(1) + '% ' + (50 - 100 * sA).toFixed(1) + '%)');
+    P(ox + 40, oy + 8, null, null, 'font-size:13px;font-weight:600;color:#FFFFFF;white-space:nowrap', o.ang);
+    if (o.y) {
+      const yy = yo[sel];
+      P(sx - 30, oy - yy, 2, yy, 'background:#F5C542');
+      P(sx - 36, oy - yy - 1, 14, 0, 'height:2px;background:#F5C542');
+      P(sx - 36, oy - 1, 14, 0, 'height:2px;background:#F5C542');
+      P(sx - 74, oy - yy / 2 - 9, null, null, 'font-size:13px;font-weight:600;color:#F5C542;white-space:nowrap', o.y);
+    }
+    if (o.D) {
+      P(ox, 230, sx - ox, 0, 'height:1px;background:#C9D1DC');
+      P(ox, 225, 0, 11, 'width:1px;height:11px;background:#C9D1DC');
+      P(sx, 225, 0, 11, 'width:1px;height:11px;background:#C9D1DC');
+      P(ox, 210, sx - ox, null, 'text-align:center;font-size:12px;color:#C9D1DC', o.D);
+    }
+    (o.info || []).forEach((line, i) => P(150, 12 + i * 18, null, null, 'font-size:12px;line-height:16px;color:#E5E9EF;white-space:nowrap', line));
+    return items;
+  }
+
+  setLab(patch) {
+    this.setState({ lab: Object.assign({}, this.state.lab, patch) });
+  }
+
+  labVals(active) {
+    const s = this.state.lab;
+    const acc = this.props.accent ?? '#1D4ED8';
+    const isSlit = s.mode === 'slit';
+    const lam = s.lambda * 1e-9;
+    const D = s.D;
+    const d = isSlit ? s.a * 1e-3 : 1e-3 / s.lines;
+    const dy = lam * D / d;
+    const half = isSlit ? 0.010 : 0.8; // fixed physical screen window, so changing λ, a, D or d visibly moves the pattern
+    const c = this.rgb(s.lambda);
+    const col = 'rgb(' + Math.round(c[0] * 255) + ',' + Math.round(c[1] * 255) + ',' + Math.round(c[2] * 255) + ')';
+
+    // orders on screen
+    const orders = [];
+    let maxShown = 0;
+    for (let n = 1; n < 400; n++) {
+      const sn = n * lam / d;
+      if (sn >= 1) break;
+      const y = D * Math.tan(Math.asin(sn));
+      if (y > half * 1.0001) break;
+      maxShown = n;
+    }
+    const nmax = Math.ceil(d / lam - 1e-9) - 1;
+    const ord = Math.min(Math.max(1, s.order), Math.max(1, maxShown));
+    const stride = Math.max(1, Math.ceil(maxShown / 6));
+    for (let n = -maxShown; n <= maxShown; n++) {
+      if (n % stride !== 0 && Math.abs(n) !== ord) continue;
+      const sn = n * lam / d;
+      const y = D * Math.tan(Math.asin(sn));
+      orders.push({ n: n, y: y, sel: Math.abs(n) === ord });
+    }
+
+    // top-view geometry
+    const Hx = Math.round(135 * D); // proportional to D, so the ray angles stay fixed when only D changes
+    const ox = 70, oy = 225, Hh = 190;
+    const wavefronts = [];
+    const wsp = s.lambda / 20; // wavefront spacing shows λ
+    for (let x = 10; x < 60; x += wsp) {
+      wavefronts.push({ st: 'position:absolute;left:' + x.toFixed(1) + 'px;top:40px;width:2px;height:370px;background:' + col + ';opacity:.45' });
+    }
+    const gapOff = Math.round(s.a * 28); // slit separation drawn in proportion to a
+    const gapUp = 'position:absolute;left:66px;top:' + (oy - gapOff - 3) + 'px;width:8px;height:6px;background:#0B1220';
+    const gapDown = 'position:absolute;left:66px;top:' + (oy + gapOff - 3) + 'px;width:8px;height:6px;background:#0B1220';
+    const period = 3000 / s.lines; // grating line spacing drawn in proportion to d
+    const gGap = Math.max(2, Math.round(period * 0.4));
+    const gratingStyle = 'position:absolute;left:66px;top:165px;width:8px;height:120px;background:repeating-linear-gradient(to bottom,#0B1220 0,#0B1220 ' + gGap + 'px,#6B7686 ' + gGap + 'px,#6B7686 ' + period.toFixed(1) + 'px)';
+    const rays = [], dots = [], dotLabels = [];
+    orders.forEach((o) => {
+      const yv = o.y / half * Hh;
+      const th = Math.atan2(yv, Hx);
+      const L = Math.hypot(Hx, yv);
+      const w = o.sel ? 3 : 2;
+      rays.push({ st: 'position:absolute;left:' + ox + 'px;top:' + (oy - w / 2) + 'px;width:' + L.toFixed(1) + 'px;height:' + w + 'px;transform-origin:0 50%;transform:rotate(' + (-th).toFixed(4) + 'rad);background:' + (o.sel ? '#FFFFFF' : col) + ';opacity:' + (o.sel ? 1 : 0.6) });
+      dots.push({ st: 'position:absolute;left:' + (ox + Hx - 6) + 'px;top:' + (oy - yv - 6).toFixed(1) + 'px;width:12px;height:12px;border-radius:50%;background:' + col + ';box-shadow:0 0 10px ' + col + ';' + (o.sel ? 'outline:2px solid #fff;' : '') });
+      dotLabels.push({ st: 'position:absolute;left:' + (ox + Hx + 14) + 'px;top:' + (oy - yv - 9).toFixed(1) + 'px;font-size:13px;line-height:18px;color:' + (o.sel ? '#FFFFFF' : '#C9D1DC') + ';font-weight:' + (o.sel ? 600 : 400), t: o.n === 0 ? '0' : 'n=' + String(o.n).replace('-', '−') });
+    });
+    const sinSel = ord * lam / d;
+    const thSel = Math.asin(sinSel);
+    const ySel = D * Math.tan(thSel);
+    const yvSel = ySel / half * Hh;
+    const thv = Math.atan2(yvSel, Hx);
+    const thetaLeft = ox + 80 * Math.cos(thv);
+    const thetaTop = oy - 80 * Math.sin(thv) - 24;
+    const thDeg = thSel * 180 / Math.PI;
+    const thTxt = thDeg < 0.1 ? thDeg.toFixed(4) : (thDeg < 1 ? thDeg.toFixed(3) : thDeg.toFixed(1));
+
+    // screen strip + intensity
+    const S = active ? 600 : 1;
+    const strips = [], bars = [];
+    const wpx = 2 * half / S;
+    const Nn = s.N;
+    const inten = (x) => {
+      const sinT = x / Math.sqrt(x * x + D * D);
+      const phi = Math.PI * d * sinT / lam;
+      if (isSlit) { const cc = Math.cos(phi); return cc * cc; }
+      const sp = Math.sin(phi);
+      if (Math.abs(sp) < 1e-6) return 1;
+      const v = Math.sin(Nn * phi) / (Nn * sp);
+      return v * v;
+    };
+    for (let i = 0; i < S; i++) {
+      const x = ((i + 0.5) / S * 2 - 1) * half;
+      const I = (inten(x - wpx / 3) + inten(x) + inten(x + wpx / 3)) / 3;
+      const v = Math.pow(I, 0.55);
+      strips.push({ st: 'flex:1 1 0;background:rgb(' + Math.round(c[0] * 255 * v) + ',' + Math.round(c[1] * 255 * v) + ',' + Math.round(c[2] * 255 * v) + ')' });
+      bars.push({ st: 'flex:1 1 0;height:' + (I * 100).toFixed(1) + '%;background:' + acc });
+    }
+    const marks = orders.map((o) => {
+      const left = (o.y / half + 1) / 2 * 100;
+      const lbl = o.n === 0 ? 'n=0' : 'n=' + String(o.n).replace('-', '−');
+      const pos = o.n === 0 ? '' : (o.y < 0 ? '−' : '') + this.len(Math.abs(o.y));
+      return { st: 'position:absolute;left:' + left.toFixed(2) + '%;top:0;transform:translateX(-50%);text-align:center;font-size:12px;line-height:16px;white-space:nowrap;border-top:2px solid ' + (o.sel ? '#17202A' : '#9AA3B0') + ';padding-top:4px;color:' + (o.sel ? '#17202A' : '#4B5563') + ';font-weight:' + (o.sel ? 600 : 400), t: lbl + (pos ? ' ' + pos : '') };
+    });
+
+    // readout, working, practice
+    let readout, steps, formulaMain, formulaNote, tasks, traps, viewNote;
+    const lamNm = s.lambda;
+    const pd = (ord * lamNm).toFixed(0) + ' nm';
+    if (isSlit) {
+      viewNote = 'Not to scale: vertical direction stretched';
+      readout = [
+        { k: 'Path difference for order n', v: ord + 'λ = ' + pd },
+        { k: 'Angle θ to the order', v: thTxt + '°' },
+        { k: 'Position y = nΔy', v: this.len(ord * dy) },
+        { k: 'Fringe spacing Δy', v: this.len(dy) }
+      ];
+      formulaMain = 'Δy = λD / a';
+      formulaNote = 'Two beams from S₁ and S₂ reinforce where the path difference is nλ. For small angles, a sin θ ≈ a·y/D, so neighbouring bright fringes are Δy = λD/a apart.';
+      steps = [
+        { t: 'λ = ' + lamNm + ' nm = ' + this.sci(lam) + ' m' },
+        { t: 'a = ' + s.a.toFixed(2) + ' mm = ' + this.sci(d) + ' m' },
+        { t: 'D = ' + D.toFixed(1) + ' m' },
+        { t: 'Δy = (' + this.sci(lam) + ')(' + D.toFixed(1) + ') ÷ (' + this.sci(d) + ')' },
+        { t: 'Δy = ' + this.len(dy) }
+      ];
+      tasks = [
+        { t: '1. Double a. Predict Δy first, then drag the slider to check.' },
+        { t: '2. Keep a and D fixed and switch red to violet. Which way do the fringes move?' },
+        { t: '3. Set D = 1.0 m, then 3.0 m. Show that Δy is proportional to D.' },
+        { t: '4. Find settings that give Δy close to 3.0 mm.' }
+      ];
+      traps = [
+        { t: '• Change mm and nm to metres before substituting.' },
+        { t: '• Δy is the gap between neighbouring fringes. Centre to the nth fringe is nΔy.' },
+        { t: '• Δy = λD/a needs a much smaller than D (small angles).' }
+      ];
+    } else {
+      viewNote = 'Not to scale: vertical direction stretched';
+      readout = [
+        { k: 'Path difference for order n', v: ord + 'λ = ' + pd },
+        { k: 'sin θ = nλ/d', v: sinSel.toFixed(3) },
+        { k: 'Angle θ', v: thTxt + '°' },
+        { k: 'Position y = D tan θ', v: this.len(ySel) },
+        { k: 'Highest order n_max', v: String(nmax) + '  (screen shows ±' + maxShown + ')' }
+      ];
+      formulaMain = 'd sin θ = nλ';
+      formulaNote = 'Light from every pair of neighbouring slits has path difference d sin θ. All the waves reinforce, giving a sharp bright spot, when d sin θ is a whole number of wavelengths.';
+      steps = [
+        { t: 'λ = ' + lamNm + ' nm = ' + this.sci(lam) + ' m' },
+        { t: 'd = 1 ÷ (' + s.lines + ' × 10³ lines per m) = ' + this.sci(d) + ' m' },
+        { t: 'n = ' + ord + ': sin θ = (' + ord + ')(' + this.sci(lam) + ') ÷ (' + this.sci(d) + ') = ' + sinSel.toFixed(3) },
+        { t: 'θ = ' + thTxt + '°' },
+        { t: 'n < d/λ = ' + (d / lam).toFixed(2) + ' → n_max = ' + nmax },
+        { t: 'Bright spots in all = 2n_max + 1 = ' + (2 * nmax + 1) }
+      ];
+      tasks = [
+        { t: '1. Use 300 lines per mm and 600 nm. Count the spots, then check with 2n_max + 1.' },
+        { t: '2. Double the lines per mm. What happens to sin θ for the first order?' },
+        { t: '3. Slide N from 2 to 20. Which things stay the same and which change?' },
+        { t: '4. Switch to violet. Does red or violet spread out further?' }
+      ];
+      traps = [
+        { t: '• 300 lines per mm means d = 1/300 mm. Do not use d = 300 mm.' },
+        { t: '• n_max: sin θ cannot exceed 1, so n < d/λ. Round down, never up.' },
+        { t: '• Count the centre spot and both sides: 2n_max + 1.' }
+      ];
+    }
+
+    const tabBase = 'min-height:44px;padding:0 20px;border-radius:8px;font-size:16px;font-weight:500;border:1px solid #17202A;';
+    const out = {
+      isSlit: isSlit, isGrating: !isSlit,
+      tabSlit: tabBase + (isSlit ? 'background:#17202A;color:#fff' : 'background:#fff;color:#17202A'),
+      tabGrating: tabBase + (!isSlit ? 'background:#17202A;color:#fff' : 'background:#fff;color:#17202A'),
+      setSlit: () => this.setLab({ mode: 'slit', D: 2, order: 1 }),
+      setGrating: () => this.setLab({ mode: 'grating', D: 1, order: 1 }),
+      lambda: s.lambda, a: s.a, lines: s.lines, D: s.D, N: s.N, order: ord,
+      lamLabel: s.lambda + ' nm', aLabel: s.a.toFixed(2) + ' mm', linesLabel: s.lines + ' /mm', DLabel: 'D = ' + s.D.toFixed(1) + ' m', NLabel: String(s.N),
+      lamSwatch: col, lamCol: col,
+      onLambda: (e) => this.setLab({ lambda: +e.target.value }),
+      onA: (e) => this.setLab({ a: +e.target.value }),
+      onLines: (e) => this.setLab({ lines: +e.target.value }),
+      onN: (e) => this.setLab({ N: +e.target.value }),
+      onD: (e) => this.setLab({ D: +e.target.value }),
+      setViolet: () => this.setLab({ lambda: 405 }),
+      setGreen: () => this.setLab({ lambda: 532 }),
+      setRed: () => this.setLab({ lambda: 650 }),
+      reset: () => this.setLab(isSlit ? { lambda: 600, a: 0.5, D: 2, order: 1 } : { lambda: 600, lines: 300, N: 8, D: 1, order: 1 }),
+      prevOrder: () => this.setLab({ order: Math.max(1, ord - 1) }),
+      nextOrder: () => this.setLab({ order: Math.min(Math.max(1, maxShown), ord + 1) }),
+      prevDisabled: ord <= 1, nextDisabled: ord >= maxShown,
+      rays: rays, dots: dots, dotLabels: dotLabels, wavefronts: wavefronts,
+      gapUp: gapUp, gapDown: gapDown, aLabelTop: oy - 9, gratingStyle: gratingStyle,
+      HxPx: Hx, screenLeft: ox + Hx - 3, screenLabelLeft: ox + Hx - 20,
+      thetaLeft: thetaLeft.toFixed(1), thetaTop: thetaTop.toFixed(1),
+      viewNote: viewNote, readout: readout, strips: strips, bars: bars, marks: marks,
+      halfLabel: this.len(half).replace('-', ''),
+      formulaMain: formulaMain, formulaNote: formulaNote, steps: steps, tasks: tasks, traps: traps
+    };
+    const o2 = {};
+    Object.keys(out).forEach((k) => { o2['L_' + k] = out[k]; });
+    return o2;
+  }
+
+  renderVals() {
+    const s = this.state;
+    const acc = this.props.accent ?? '#1D4ED8';
+    const isLesson = s.view === 'lesson';
+    const isSim = s.view === 'sim';
+    const isPractice = s.view === 'practice';
+    const bank = this.bank();
+    const stageSets = ['st1', 'stpic', 'st2', 'st3', 'st4', 'st5'];
+    const stageDone = (k) => bank.filter((q) => q.set === stageSets[k - 1] || (k === 6 && q.set === 'derive')).every((q) => (s.ans[q.id] || {}).status === 'correct');
+    const reachable = (k) => { for (let i = 1; i < k; i++) { if (!stageDone(i)) return false; } return true; };
+    const titles = ['Why a grating?', 'The whole picture', 'The grating spacing d', 'Meet the formula', 'Use the formula', 'Maximum order'];
+    const goals = [
+      'Describe what a diffraction grating does to a beam of light.',
+      'See the whole experiment and notice what changes the pattern: wavelength, lines per mm and screen distance.',
+      'Calculate the grating spacing d from lines per mm.',
+      'Know every symbol in d sin θ = nλ and when to use it.',
+      'Use d sin θ = nλ to find an angle, a wavelength or a spacing.',
+      'Find the maximum order and the total number of bright spots.'
+    ];
+    const chips = [1, 2, 3, 4, 5, 6].map((k) => ({
+      t: k + '. ' + titles[k - 1],
+      locked: false,
+      go: () => this.setState({ stage: k }),
+      st: 'min-height:44px;padding:0 14px;border-radius:8px;font-size:14px;font-weight:500;border:1px solid ' + (s.stage === k ? '#FFFFFF' : '#6B7686') + ';background:' + (s.stage === k ? '#FFFFFF' : 'transparent') + ';color:' + (s.stage === k ? '#17202A' : '#FFFFFF')
+    }));
+    const tabBase = 'min-height:44px;padding:0 20px;border-radius:8px;font-size:16px;font-weight:500;border:1px solid #FFFFFF;';
+    const cardStyle = 'background:#fff;border:1px solid #D5D9D2;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;box-sizing:border-box';
+
+    // simulation numbers
+    const lines = s.lines, lamNm = s.lam;
+    const lam = lamNm * 1e-9, d = 1e-3 / lines;
+    const col = this.rgb(lamNm);
+    const colStr = 'rgb(' + Math.round(col[0] * 255) + ',' + Math.round(col[1] * 255) + ',' + Math.round(col[2] * 255) + ')';
+    const pos = s.stage;
+    const stage = [1, 0, 2, 3, 4, 5][pos - 1];
+    const showPic = isLesson && stage === 0;
+    const showSim = isLesson && (stage === 1 || stage === 3 || stage === 4);
+    const showSimControls = isLesson && (stage === 3 || stage === 4);
+    let simVals = { strips: [], bars: [], marks: [], maxShown: 1 };
+    let nSel = 1;
+    if (showPic) { simVals = this.strip(lamNm, lines, 12, s.D, 0); }
+    if (showSim) {
+      if (stage === 1) {
+        simVals = this.strip(600, 300, s.N, 1, 0);
+      } else {
+        const first = this.strip(lamNm, lines, 8, 1, 1);
+        nSel = Math.min(Math.max(1, s.n), Math.max(1, first.maxShown));
+        simVals = this.strip(lamNm, lines, 8, 1, nSel);
+      }
+    }
+    const sinN = nSel * lam / d;
+    const thN = Math.asin(Math.min(1, sinN)) * 180 / Math.PI;
+    const simWork = [
+      { t: 'd = 1 ÷ ' + lines + ' mm = ' + this.sci(d) + ' m' },
+      { t: 'λ = ' + lamNm + ' nm = ' + this.sci(lam) + ' m,  n = ' + nSel },
+      { t: 'sin θ = nλ ÷ d = ' + sinN.toFixed(3) },
+      { t: 'θ = ' + thN.toFixed(1) + '°' }
+    ];
+
+    // ---- whole-picture simulation (top view) ----
+    const pic = [];
+    let picWork = [];
+    if (showPic) {
+      const W = 560, H = 450, pox = 70, poy = 225, Hh = 190, phalf = 0.8, Dm = s.D;
+      const Hx = Math.round(135 * Dm); // proportional to D, so the ray angles stay fixed when only D changes
+      const PX = (v) => (v / W * 100).toFixed(3) + '%';
+      const PY = (v) => (v / H * 100).toFixed(3) + '%';
+      const P = (l, tp, w, h, extra, txt) => pic.push({ st: 'position:absolute;left:' + PX(l) + ';top:' + PY(tp) + ';' + (w === null ? '' : 'width:' + PX(w) + ';') + (h === null ? '' : 'height:' + PY(h) + ';') + (extra || ''), t: txt || '' });
+      const wsp = lamNm / 20;
+      for (let x = 10; x < 60; x += wsp) P(x, 160, 2, 120, 'background:' + colStr + ';opacity:.45');
+      P(14, 134, null, null, 'font-size:13px;color:#C9D1DC;white-space:nowrap', 'Incident light, λ');
+      // zoom-in inset: what d means
+      P(14, 28, 120, 100, 'border:1px solid #6B7686;border-radius:8px;background:#F7F8F6;box-sizing:border-box');
+      P(20, 31, 110, null, 'font-size:11px;line-height:13px;color:#4B5563', 'Zoom in on the slits');
+      P(42, 50, 10, 72, 'background:#6B7686');
+      [60, 80, 100].forEach((yy) => P(42, yy, 10, 6, 'background:#F7F8F6'));
+      P(64, 63, 0, 20, 'width:2px;background:#1D4ED8');
+      P(52, 63, 14, 0, 'height:2px;background:#1D4ED8');
+      P(52, 83, 14, 0, 'height:2px;background:#1D4ED8');
+      P(72, 64, null, null, 'font-size:16px;font-style:italic;font-weight:600;color:#1D4ED8', 'd');
+      P(84, 84, null, null, 'font-size:10px;line-height:12px;color:#4B5563;width:44px', 'slit spacing');
+      let mShown = 0;
+      for (let n = 1; n < 400; n++) {
+        const sn = n * lam / d;
+        if (sn >= 1) break;
+        if (Dm * Math.tan(Math.asin(sn)) > phalf) break;
+        mShown = n;
+      }
+      const stp = Math.max(1, Math.ceil(mShown / 6));
+      for (let n = -mShown; n <= mShown; n++) {
+        if (n % stp !== 0 && n !== 1) continue;
+        const y = Dm * Math.tan(Math.asin(n * lam / d));
+        const yv = y / phalf * Hh;
+        const th = Math.atan2(yv, Hx);
+        const L = Math.hypot(Hx, yv);
+        const hl = n === 1;
+        P(pox, poy - (hl ? 1.5 : 1), L, 0, 'height:' + (hl ? 3 : 2) + 'px;transform-origin:0 50%;transform:rotate(' + (-th).toFixed(4) + 'rad);background:' + (hl ? '#FFFFFF' : colStr) + ';opacity:' + (hl ? 1 : 0.7));
+        P(pox + Hx - 6, poy - yv - 6, 12, null, 'aspect-ratio:1;border-radius:50%;background:' + colStr + ';box-shadow:0 0 10px ' + colStr);
+        P(pox + Hx + 14, poy - yv - 9, null, null, 'font-size:13px;line-height:18px;color:#E5E9EF;white-space:nowrap', n === 0 ? '0' : 'n=' + String(n).replace('-', '−'));
+      }
+      // straight-through line, angle arc and theta label for the 1st order
+      if (mShown >= 1) {
+        const y1v = Dm * Math.tan(Math.asin(lam / d)) / phalf * Hh;
+        const t1 = Math.atan2(y1v, Hx);
+        const cA = Math.cos(t1), sA = Math.sin(t1), cH = Math.cos(t1 / 2), sH = Math.sin(t1 / 2);
+        const thTrue = Math.asin(lam / d) * 180 / Math.PI;
+        P(pox, poy - 1, Hx, 0, 'border-top:2px dashed #C9D1DC');
+        P(pox + 44, poy - 40, 72, null, 'left:' + PX(pox - 36) + ';top:' + PY(poy - 36) + ';aspect-ratio:1;border-radius:50%;border:2.5px solid #FFFFFF;box-sizing:border-box;clip-path:polygon(50% 50%,150% 50%,' + (50 + 100 * cH).toFixed(1) + '% ' + (50 - 100 * sH).toFixed(1) + '%,' + (50 + 100 * cA).toFixed(1) + '% ' + (50 - 100 * sA).toFixed(1) + '%)');
+        P(pox + 44, poy + 8, null, null, 'font-size:14px;font-weight:600;color:#FFFFFF;white-space:nowrap', 'θ₁ = ' + thTrue.toFixed(1) + '°');
+        P(pox + 44, poy + 26, null, null, 'font-size:12px;color:#C9D1DC;white-space:nowrap', 'measured from the straight-through line');
+      }
+      P(66, 0, 8, 450, 'background:#6B7686');
+      const per = 3000 / lines, gg = Math.max(2, Math.round(per * 0.4));
+      P(66, 165, 8, 120, 'background:repeating-linear-gradient(to bottom,#0B1220 0,#0B1220 ' + gg + 'px,#6B7686 ' + gg + 'px,#6B7686 ' + per.toFixed(1) + 'px)');
+      P(30, 292, null, null, 'font-size:13px;color:#C9D1DC;white-space:nowrap', 'grating');
+      P(30, 328, null, null, 'font-size:12px;color:#C9D1DC;white-space:nowrap', '(slits d apart)');
+      P(pox + Hx - 3, 30, 6, 390, 'background:#9AA3B0');
+      P(pox + Hx - 22, 8, null, null, 'font-size:13px;color:#C9D1DC', 'Screen');
+      P(pox, 416, Hx, null, 'text-align:center;font-size:13px;color:#C9D1DC', 'D = ' + Dm.toFixed(1) + ' m');
+      P(pox, 436, Hx, 0, 'height:1px;background:#C9D1DC');
+      P(pox, 431, 0, 11, 'width:1px;height:11px;background:#C9D1DC');
+      P(pox + Hx, 431, 0, 11, 'width:1px;height:11px;background:#C9D1DC');
+      const s1 = lam / d;
+      const th1 = s1 < 1 ? Math.asin(s1) * 180 / Math.PI : null;
+      const nmaxP = Math.ceil(d / lam - 1e-9) - 1;
+      picWork = [
+        { t: 'Grating spacing d = ' + (d * 1e6).toFixed(2) + ' µm' },
+        { t: th1 === null ? 'No first-order spot (d is smaller than λ)' : 'First-order spot: θ₁ = ' + th1.toFixed(1) + '°  →  on the screen: ' + (Dm * Math.tan(th1 * Math.PI / 180) * 100).toFixed(1) + ' cm from the centre' },
+        { t: 'Highest order that can exist: n_max = ' + nmaxP }
+      ];
+    }
+
+    // stage 2 picture
+    const pitch = 6000 / lines;
+    const slits = [];
+    const nsl = Math.min(60, Math.floor(560 / pitch) + 1);
+    for (let i = 0; i < nsl; i++) {
+      slits.push({ st: 'position:absolute;left:' + (30 + i * pitch).toFixed(1) + 'px;top:30px;width:3px;height:60px;background:#E6EEF9' });
+    }
+    const dBarStyle = 'position:absolute;left:' + (31.5).toFixed(1) + 'px;top:104px;width:' + pitch.toFixed(1) + 'px;height:2px;background:#FFFFFF';
+    const dLabelStyle = 'position:absolute;left:' + (31.5 + pitch / 2 - 4).toFixed(1) + 'px;top:108px;font-size:14px;font-weight:600;color:#FFFFFF';
+    const dWorking = 'd = 1 ÷ ' + lines + ' mm = ' + (1 / lines).toExponential(2).replace('e-', ' × 10⁻').replace(/10⁻(\d)/, (m, g1) => '10' + this.sup('-' + g1)) + ' mm\nd = ' + this.sci(d) + ' m  (= ' + (d * 1e6).toFixed(2) + ' µm)';
+
+    // stage 5 ruler
+    const ruler = [];
+    const nmax5 = Math.ceil(d / lam - 1e-9) - 1;
+    [-90, -60, -30, 0, 30, 60, 90].forEach((a) => {
+      ruler.push({ st: 'position:absolute;left:' + ((a + 90) / 180 * 100) + '%;top:84px;transform:translateX(-50%);font-size:12px;color:#C9D1DC;border-left:1px solid #6B7686;padding-left:3px;white-space:nowrap', t: a + '°' });
+    });
+    for (let n = -nmax5; n <= nmax5; n++) {
+      const th = Math.asin(n * lam / d) * 180 / Math.PI;
+      ruler.push({ st: 'position:absolute;left:' + ((th + 90) / 180 * 100).toFixed(2) + '%;top:46px;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;background:' + colStr + ';box-shadow:0 0 10px ' + colStr + ';font-size:0', t: '' });
+      ruler.push({ st: 'position:absolute;left:' + ((th + 90) / 180 * 100).toFixed(2) + '%;top:64px;transform:translateX(-50%);font-size:12px;color:#FFFFFF;white-space:nowrap', t: n });
+    }
+    const s5a = 'd ÷ λ = ' + (d / lam).toFixed(2);
+    const s5b = 'n_max = ' + nmax5;
+    const s5c = 'Total spots = ' + (2 * nmax5 + 1);
+
+    // questions in view
+    const qset = isLesson ? stageSets[pos - 1] : s.ptab;
+    const list = isSim ? [] : bank.filter((q) => q.set === qset);
+    const qs = list.map((q, idx) => {
+      const st = s.ans[q.id] || {};
+      const res = st.status;
+      const setAns = (patch) => this.setState({ ans: Object.assign({}, s.ans, { [q.id]: Object.assign({}, st, patch) }) });
+      const commit = (extra) => {
+        const merged = Object.assign({}, st, extra);
+        const r = this.evaluate(q, merged);
+        this.setState({ ans: Object.assign({}, s.ans, { [q.id]: Object.assign({}, merged, { status: r.status, fb: r.fb }) }) });
+      };
+      const letters = ['A', 'B', 'C', 'D', 'E'];
+      const options = (q.options || []).map((txt, i) => {
+        const chosen = st.sel === i;
+        let bg = '#fff', bd = '#17202A';
+        if (chosen && res === 'correct') { bg = '#DDEFE2'; bd = '#14532D'; }
+        else if (chosen && res === 'wrong') { bg = '#FBE3D2'; bd = '#9A3412'; }
+        return { label: letters[i] + '.  ' + txt, pick: () => commit({ sel: i }), st: 'text-align:left;min-height:44px;padding:8px 14px;border-radius:8px;font-size:15px;line-height:1.4;color:#17202A;border:' + (chosen ? 2 : 1) + 'px solid ' + bd + ';background:' + bg };
+      });
+      const fb = st.fb;
+      let fbStyle = '';
+      if (res === 'correct') fbStyle = 'font-size:15px;font-weight:500;background:#DDEFE2;color:#14532D;border-radius:8px;padding:10px 14px';
+      else if (res) fbStyle = 'font-size:15px;font-weight:500;background:#FBE3D2;color:#7C2D12;border-radius:8px;padding:10px 14px';
+      // handwriting pad (practice only)
+      const strokes = s.ink[q.id] || [];
+      const cur = s.cur && s.cur.qid === q.id ? s.cur : null;
+      const group = (c) => {
+        let d = strokes.filter((sk) => sk.c === c).map((sk) => this.pathD(sk.pts)).join(' ');
+        if (cur && cur.c === c) d += ' ' + this.pathD(cur.pts);
+        return d.trim();
+      };
+      const swatch = (c, hex) => 'width:44px;height:44px;border-radius:50%;background:' + hex + ';border:' + (s.color === c && s.tool === 'pen' ? '4px solid #fff;box-shadow:0 0 0 2px #17202A' : '2px solid #fff;box-shadow:0 0 0 1px #9AA3B0') + ';padding:0';
+      const toolSt = (on) => 'min-height:44px;padding:0 16px;border-radius:8px;font-size:14px;font-weight:500;border:1px solid #17202A;' + (on ? 'background:#17202A;color:#fff' : 'background:#fff;color:#17202A');
+      const pad = {
+        padAllowed: isPractice,
+        padOpen: !!s.pads[q.id],
+        padBtn: s.pads[q.id] ? 'Hide working space' : 'Write your working',
+        padToggle: () => this.setState({ pads: Object.assign({}, s.pads, { [q.id]: !s.pads[q.id] }) }),
+        dK: group('k'), dB: group('b'), dR: group('r'),
+        noInk: strokes.length === 0,
+        penOn: s.tool === 'pen', eraseOn: s.tool === 'erase',
+        penSt: toolSt(s.tool === 'pen'), eraseSt: toolSt(s.tool === 'erase'),
+        kOn: s.color === 'k', bOn: s.color === 'b', rOn: s.color === 'r',
+        kSt: swatch('k', '#17202A'), bSt: swatch('b', '#1D4ED8'), rSt: swatch('r', '#C2410C'),
+        tPen: () => this.setState({ tool: 'pen' }),
+        tErase: () => this.setState({ tool: 'erase' }),
+        cK: () => this.setState({ tool: 'pen', color: 'k' }),
+        cB: () => this.setState({ tool: 'pen', color: 'b' }),
+        cR: () => this.setState({ tool: 'pen', color: 'r' }),
+        fingerOn: s.finger, fingerTxt: s.finger ? 'on' : 'off', fingerSt: toolSt(s.finger),
+        tFinger: () => this.setState({ finger: !s.finger }),
+        undo: () => this.setState({ ink: Object.assign({}, s.ink, { [q.id]: strokes.slice(0, -1) }) }),
+        clearInk: () => this.setState({ ink: Object.assign({}, s.ink, { [q.id]: [] }) }),
+        pDown: (e) => {
+          if (!this.penOk(e)) return;
+          if (e.preventDefault) e.preventDefault();
+          try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+          const pt = this.padPoint(e);
+          if (this.state.tool === 'erase') { this.erasing = q.id; this.eraseAt(q.id, pt); return; }
+          this.setState({ cur: { qid: q.id, c: this.state.color, pts: [pt] } });
+        },
+        pMove: (e) => {
+          if (!this.penOk(e)) return;
+          const pt = this.padPoint(e);
+          if (this.erasing === q.id && this.state.tool === 'erase') { this.eraseAt(q.id, pt); return; }
+          const c = this.state.cur;
+          if (!c || c.qid !== q.id) return;
+          const last = c.pts[c.pts.length - 1];
+          if (Math.hypot(pt[0] - last[0], pt[1] - last[1]) < 1.5) return;
+          this.setState({ cur: { qid: c.qid, c: c.c, pts: c.pts.concat([pt]) } });
+        },
+        pUp: (e) => {
+          this.erasing = null;
+          const c = this.state.cur;
+          if (!c || c.qid !== q.id) return;
+          const list = (this.state.ink[q.id] || []).concat([{ c: c.c, pts: c.pts }]);
+          this.setState({ ink: Object.assign({}, this.state.ink, { [q.id]: list }), cur: null });
+        }
+      };
+      const gset = this.groups();
+      const gi = q.group ? gset[q.group] : null;
+      const sameG = (x) => x && x.group === q.group;
+      const groupDone = gi ? list.filter((x) => x.group === q.group).every((x) => (s.ans[x.id] || {}).status === 'correct') : false;
+      return Object.assign(pad, {
+        hasGroup: !!gi && !sameG(list[idx - 1]),
+        groupTitle: gi ? gi.title : '', groupFixed: gi ? gi.fixed : '', groupVarying: gi ? gi.varying : '',
+        showNote: !!gi && !sameG(list[idx + 1]) && groupDone, groupNote: gi ? gi.note : '',
+        hasFig: !!q.fig, fig: q.fig ? this.schematic(q.fig) : [],
+        num: (isLesson ? 'Check ' : 'Question ') + (idx + 1),
+        hasLevel: !!q.level, level: q.level || '',
+        correct: res === 'correct',
+        text: q.text,
+        isMc: q.type === 'mc', isNum: q.type === 'num',
+        options: options,
+        val: st.val === undefined ? '' : st.val,
+        label: 'Answer to question ' + (idx + 1),
+        unit: q.unit || '',
+        onInput: (e) => setAns({ val: e.target.value }),
+        check: () => commit({}),
+        hasFb: !!res, fbText: fb || '', fbStyle: fbStyle,
+        hint: q.hint, solution: q.sol,
+        hintOpen: !!s.hints[q.id], solOpen: !!s.sols[q.id],
+        hintBtn: s.hints[q.id] ? 'Hide hint' : 'Show hint',
+        solBtn: s.sols[q.id] ? 'Hide worked solution' : 'Show worked solution',
+        toggleHint: () => this.setState({ hints: Object.assign({}, s.hints, { [q.id]: !s.hints[q.id] }) }),
+        toggleSol: () => this.setState({ sols: Object.assign({}, s.sols, { [q.id]: !s.sols[q.id] }) })
+      });
+    });
+
+    // ---- stage 3 diagram (rebuilt from the textbook figure) ----
+    const hc = (k) => (s.sym === k ? acc : '#17202A');
+    const hw = (k) => (s.sym === k ? 600 : 400);
+    const ox = 174, oy = 210, scrX = 430;
+    const yOff = { 1: 38, 2: 82, 3: 128 };
+    const dn = Math.min(3, Math.max(1, s.dn));
+    const dxr = scrX - ox;
+    const thD = Math.atan2(yOff[dn], dxr);
+    const lenR = Math.hypot(dxr, yOff[dn]);
+    const subs = { 1: '₁', 2: '₂', 3: '₃' };
+    const ordName = { 1: '1st', 2: '2nd', 3: '3rd' };
+    const dg = [];
+    const X = (v) => (v / 720 * 100).toFixed(3) + '%';
+    const Y = (v) => (v / 420 * 100).toFixed(3) + '%';
+    // A(left, top, width, height, extra style, text): all positions are % of the 720 x 420 drawing, so it scales to the screen width
+    const A = (l, tp, w, h, extra, t) => dg.push({ st: 'position:absolute;left:' + X(l) + ';top:' + Y(tp) + ';' + (w === null ? '' : 'width:' + X(w) + ';') + (h === null ? '' : 'height:' + Y(h) + ';') + (extra || ''), t: t || '' });
+    // zoom-in inset
+    A(20, 14, 136, 116, 'border:1px solid #D5D9D2;border-radius:8px;background:#F7F8F6;box-sizing:border-box');
+    A(28, 18, 120, null, 'font-size:12px;line-height:14px;color:#4B5563', 'Zoom in on the slits');
+    A(64, 44, 10, 78, 'background:#6B7686');
+    [56, 76, 96].forEach((y) => A(64, y, 10, 6, 'background:#F7F8F6'));
+    A(88, 59, null, 20, 'width:1.5px;background:' + hc('d'));
+    A(74, 59, 16, null, 'height:1.5px;background:' + hc('d'));
+    A(74, 79, 16, null, 'height:1.5px;background:' + hc('d'));
+    A(96, 60, null, null, 'font-size:16px;font-style:italic;font-weight:600;color:' + hc('d'), 'd');
+    // incident light
+    A(20, 209, 132, null, 'height:2px;background:' + hc('lam'));
+    A(150, 203, null, null, 'width:0;height:0;border-left:11px solid ' + hc('lam') + ';border-top:7px solid transparent;border-bottom:7px solid transparent');
+    A(20, 178, null, null, 'font-size:15px;white-space:nowrap;color:' + hc('lam') + ';font-weight:' + hw('lam'), 'wavelength λ');
+    // grating
+    A(160, 160, 14, 100, 'background:' + (s.sym === 'd' ? acc : '#6B7686') + ';border:1.5px solid #17202A;box-sizing:border-box');
+    A(76, 268, null, null, 'font-size:15px;white-space:nowrap;color:' + hc('d') + ';font-weight:' + hw('d'), 'grating spacing d');
+    // screen
+    A(scrX, 24, 18, 372, 'background:#F7F8F6;border:2px solid #17202A;box-sizing:border-box');
+    A(scrX - 41, 2, 100, null, 'text-align:center;font-size:15px', 'screen');
+    // dashed lines
+    A(ox, oy, dxr, 0, 'border-top:2px dashed #17202A');
+    A(ox, oy, lenR, 0, 'border-top:2px dashed ' + hc('theta') + ';transform-origin:0 0;transform:rotate(' + (-thD).toFixed(4) + 'rad)');
+    // angle arc (wedge between the two dashed lines)
+    const cA = Math.cos(thD), sA = Math.sin(thD), cH = Math.cos(thD / 2), sH = Math.sin(thD / 2);
+    A(ox - 36, oy - 36, 72, null, 'aspect-ratio:1;border-radius:50%;border:2.5px solid ' + hc('theta') + ';box-sizing:border-box;clip-path:polygon(50% 50%,150% 50%,' + (50 + 100 * cH).toFixed(1) + '% ' + (50 - 100 * sH).toFixed(1) + '%,' + (50 + 100 * cA).toFixed(1) + '% ' + (50 - 100 * sA).toFixed(1) + '%)');
+    A(ox + 44, oy + 10, null, null, 'font-size:15px;white-space:nowrap;color:' + hc('theta') + ';font-weight:' + hw('theta'), 'angular position θ' + subs[dn]);
+    // orders on the screen
+    const ordColor = (n) => (s.sym === 'n' ? acc : (Math.abs(n) === dn ? acc : '#17202A'));
+    const ordW = (n) => (s.sym === 'n' || Math.abs(n) === dn ? 600 : 400);
+    [3, 2, 1, 0, -1, -2, -3].forEach((n) => {
+      const a = Math.abs(n);
+      const y = oy - (n < 0 ? -1 : 1) * (a === 0 ? 0 : yOff[a]);
+      A(scrX + 26, y - 3, 20, 6, 'background:' + ordColor(n));
+      A(scrX + 54, y - 11, null, null, 'font-size:15px;line-height:22px;white-space:nowrap;color:' + ordColor(n) + ';font-weight:' + ordW(n), a === 0 ? '0th order / central fringe' : ordName[a] + ' order');
+    });
+    [1, -1].forEach((sg) => {
+      const y = oy - sg * 170;
+      A(scrX + 26, y - 3, 20, 6, 'background:' + (s.sym === 'n' ? acc : '#17202A'));
+      A(scrX + 54, y - 11, null, null, 'font-size:15px;line-height:22px;white-space:nowrap;color:' + (s.sym === 'n' ? acc : '#17202A') + ';font-weight:' + (s.sym === 'n' ? 600 : 400), 'nth-order fringe');
+      [146, 156].forEach((k) => A(scrX + 34, oy - sg * k - 2, 4, 4, 'background:#17202A'));
+    });
+    const symList = [
+      { k: 'd', s: 'd', t: 'grating spacing' },
+      { k: 'theta', s: 'θ', t: 'angular position of the bright fringe' },
+      { k: 'n', s: 'n', t: 'order' },
+      { k: 'lam', s: 'λ', t: 'wavelength of the source' }
+    ];
+    const symbols = symList.map((y) => ({
+      s: y.s, t: y.t, on: s.sym === y.k,
+      go: () => this.setState({ sym: s.sym === y.k ? null : y.k }),
+      st: 'min-height:44px;padding:6px 14px;border-radius:8px;font-size:15px;text-align:left;border:' + (s.sym === y.k ? 2 : 1) + 'px solid ' + (s.sym === y.k ? acc : '#17202A') + ';background:' + (s.sym === y.k ? '#E8EEFC' : '#fff') + ';color:#17202A'
+    }));
+    const symDetails = {
+      d: 'd: the distance between neighbouring slits, in metres. Find it from lines per mm: d = 1 ÷ (lines per mm), then change mm to m.',
+      theta: 'θₙ: the angle between the straight-through direction (the 0th order) and the line from the grating to the nth-order bright fringe. It is not measured from the screen or the grating.',
+      n: 'n: the order of the bright fringe. 0th is the central fringe, then 1st, 2nd, 3rd… counting outwards on both sides.',
+      lam: 'λ: the wavelength of the light source, in metres. Change nm to m by multiplying by 10⁻⁹.'
+    };
+    const symDetail = s.sym ? symDetails[s.sym] : 'Tap a symbol above to see where it appears in the diagram.';
+
+    // ---- stage 5 guided derivation ----
+    const dq = bank.filter((q) => q.set === 'derive');
+    const dsteps = dq.map((q, idx) => {
+      const st = s.ans[q.id] || {};
+      const res = st.status;
+      const prevOk = idx === 0 || (s.ans[dq[idx - 1].id] || {}).status === 'correct';
+      const letters = ['A', 'B', 'C', 'D'];
+      const options = q.options.map((txt, i) => {
+        const chosen = st.sel === i;
+        let bg = '#fff', bd = '#17202A';
+        if (chosen && res === 'correct') { bg = '#DDEFE2'; bd = '#14532D'; }
+        else if (chosen && res === 'wrong') { bg = '#FBE3D2'; bd = '#9A3412'; }
+        return { label: letters[i] + '.  ' + txt, pick: () => {
+          const merged = Object.assign({}, st, { sel: i });
+          const r = this.evaluate(q, merged);
+          this.setState({ ans: Object.assign({}, s.ans, { [q.id]: Object.assign({}, merged, { status: r.status, fb: r.fb }) }) });
+        }, st: 'text-align:left;min-height:44px;padding:8px 14px;border-radius:8px;font-size:15px;line-height:1.4;color:#17202A;border:' + (chosen ? 2 : 1) + 'px solid ' + bd + ';background:' + bg };
+      });
+      let fbStyle = '';
+      if (res === 'correct') fbStyle = 'font-size:15px;font-weight:500;background:#DDEFE2;color:#14532D;border-radius:8px;padding:10px 14px';
+      else if (res) fbStyle = 'font-size:15px;font-weight:500;background:#FBE3D2;color:#7C2D12;border-radius:8px;padding:10px 14px';
+      return {
+        show: prevOk, title: q.title, text: q.text, options: options,
+        hasFb: !!res, fbText: st.fb || '', fbStyle: fbStyle,
+        done: res === 'correct', result: q.result,
+        hint: q.hint, hintOpen: !!s.hints[q.id], hintBtn: s.hints[q.id] ? 'Hide hint' : 'Show hint',
+        toggleHint: () => this.setState({ hints: Object.assign({}, s.hints, { [q.id]: !s.hints[q.id] }) })
+      };
+    });
+    const derivedAll = dq.every((q) => (s.ans[q.id] || {}).status === 'correct');
+
+    // nav
+    const done = stageDone(pos);
+    const last = pos === 6;
+    const nextLabel = last ? 'Go to practice' : 'Next stage';
+    const navNote = pos === 2 ? 'Explore freely, then move on when you are ready.' : (done ? 'Stage complete.' : 'You can move on at any time and come back to the open questions later.');
+
+    // practice report
+    const pl = bank.filter((q) => q.set === s.ptab);
+    let totalCorrect = 0;
+    pl.forEach((q) => { if ((s.ans[q.id] || {}).status === 'correct') totalCorrect++; });
+    const report = this.skillInfo(s.ptab).map((sk) => {
+      const items = pl.filter((q) => q.skill === sk.key);
+      const att = items.filter((q) => (s.ans[q.id] || {}).status).length;
+      const cor = items.filter((q) => (s.ans[q.id] || {}).status === 'correct').length;
+      const frac = items.length ? cor / items.length : 0;
+      let status = 'Not finished';
+      if (att === items.length) status = frac >= 0.7 ? 'Secure' : 'Revisit';
+      const revisit = status === 'Revisit' && sk.stage;
+      return {
+        name: sk.name, score: cor + ' / ' + items.length, status: status,
+        bar: 'height:100%;width:' + (frac * 100).toFixed(0) + '%;background:' + acc,
+        revisit: !!revisit,
+        goLabel: sk.stage ? 'Go back to Stage ' + sk.stage : '',
+        go: () => this.setState({ view: 'lesson', stage: sk.stage || 1 })
+      };
+    });
+    const pTabs = [['grating', 'Diffraction grating'], ['slit', 'Double slit'], ['mixed', 'Which formula?']];
+    const ptabs = pTabs.map((p) => ({
+      t: p[1], on: s.ptab === p[0],
+      go: () => this.setState({ ptab: p[0] }),
+      st: 'min-height:44px;padding:0 18px;border-radius:8px;font-size:15px;font-weight:500;border:1px solid #17202A;' + (s.ptab === p[0] ? 'background:#17202A;color:#fff' : 'background:#fff;color:#17202A')
+    }));
+    const pFormula = s.ptab === 'grating' ? 'd sin θ = nλ    n < d / λ' : (s.ptab === 'slit' ? 'Δy = λD / a' : 'Δy = λD / a    d sin θ = nλ');
+    const pNote = s.ptab === 'grating'
+      ? 'd = 1 ÷ (lines per mm), then change mm to m. Total bright spots = 2n_max + 1.'
+      : (s.ptab === 'slit'
+        ? 'Δy is the distance between neighbouring bright fringes. Use metres for λ, a and D. Count gaps, not fringes, when measuring across several fringes.'
+        : 'Two slits and a distant screen: fringe spacing, use Δy = λD/a. Grating with an angle and an order: use d sin θ = nλ.');
+
+    const learn = {
+      isLesson: isLesson, isSim: isSim, isPractice: isPractice,
+      tabLesson: tabBase + (isLesson ? 'background:#FFFFFF;color:#17202A' : 'background:transparent;color:#FFFFFF'),
+      tabSim: tabBase + (isSim ? 'background:#FFFFFF;color:#17202A' : 'background:transparent;color:#FFFFFF'),
+      goSim: () => this.setState({ view: 'sim' }),
+      tabPractice: tabBase + (isPractice ? 'background:#FFFFFF;color:#17202A' : 'background:transparent;color:#FFFFFF'),
+      goLesson: () => this.setState({ view: 'lesson' }),
+      goPractice: () => this.setState({ view: 'practice' }),
+      chips: chips,
+      stageKicker: 'Stage ' + pos + ' of 6',
+      stageTitle: titles[pos - 1], stageGoal: goals[pos - 1],
+      isSP: showPic, isS1: isLesson && stage === 1, isS2: isLesson && stage === 2, isS3: isLesson && stage === 3, isS4: isLesson && stage === 4, isS5: isLesson && stage === 5,
+      cardStyle: cardStyle,
+      N: s.N, onN: (e) => this.setState({ N: +e.target.value }),
+      lines: s.lines, linesLabel: s.lines + ' lines/mm', onLines: (e) => this.setState({ lines: +e.target.value }),
+      lam: s.lam, lamLabel: s.lam + ' nm', lamCol: colStr, onLam: (e) => this.setState({ lam: +e.target.value }),
+      slits: slits, dBarStyle: dBarStyle, dLabelStyle: dLabelStyle, dWorking: dWorking,
+      symbols: symbols, dg: dg, symDetail: symDetail, dn: dn,
+      prevDn: () => this.setState({ dn: Math.max(1, dn - 1) }),
+      nextDn: () => this.setState({ dn: Math.min(3, dn + 1) }),
+      dnPrevDisabled: dn <= 1, dnNextDisabled: dn >= 3,
+      dsteps: dsteps, derivedAll: derivedAll,
+      rearr: [
+        { k: 'Find the angle', f: 'sin θ = nλ ÷ d', t: 'You know d (or lines per mm), λ and n. Finish with sin⁻¹.' },
+        { k: 'Find the wavelength', f: 'λ = d sin θ ÷ n', t: 'You know d, the angle and the order.' },
+        { k: 'Find the spacing / lines per mm', f: 'd = nλ ÷ sin θ', t: 'You know λ, the angle and the order. Then lines per mm = 1 ÷ d in mm.' }
+      ],
+      ruler: ruler, s5a: s5a, s5b: s5b, s5c: s5c,
+      showSim: showSim, showSimControls: showSimControls,
+      exFig: stage === 4 ? this.schematic({ n: 1, ang: 'θ₁ = ?', info: ['300 lines per mm', 'λ = 600 nm'], D: 'D = 2.00 m', y: 'y = ?' }) : [],
+      exSteps: [
+        { t: '(a)  d = (1 ÷ 300) mm = 3.33 × 10⁻³ mm\n     d = 3.33 × 10⁻⁶ m', m: '1A' },
+        { t: '(b)  d sin θ = nλ, with n = 1:\n     sin θ = (1)(600 × 10⁻⁹) ÷ (3.33 × 10⁻⁶) = 0.180', m: '1M' },
+        { t: '     θ = sin⁻¹(0.180) = 10.4°', m: '1A' },
+        { t: '(c)  y = D tan θ = (2.00) tan 10.4°', m: '1M' },
+        { t: '     y = 0.366 m', m: '1A' }
+      ],
+      hasQs: qs.length > 0,
+      thinkQs: [
+        { n: '1.', t: 'Move only the screen distance D. What changes: the direction of the rays, the length of the rays, or the spacing of the spots on the screen?' },
+        { n: '2.', t: 'Switch the light from red to violet. Do the spots move towards the centre or away from it?' },
+        { n: '3.', t: 'Increase the lines per mm. What happens to the distance d between neighbouring slits, and what happens to the spread of the spots?' },
+        { n: '4.', t: 'Look at the first-order ray. Which line is the angle θ measured from?' },
+        { n: '5.', t: 'Can you keep adding more spots forever? What seems to stop them?' },
+        { n: '6.', t: 'Does the central spot (n = 0) ever move?' }
+      ],
+      pic: pic, picWork: picWork, onD: (e) => this.setState({ D: +e.target.value }), DLab: 'D = ' + s.D.toFixed(1) + ' m', Dval: s.D,
+      simTitle: stage === 3 ? 'Try it: move the sliders and read the numbers' : 'Check your answers here',
+      strips: simVals.strips, bars: simVals.bars, marks: simVals.marks,
+      nSel: nSel, simWork: simWork,
+      prevN: () => this.setState({ n: Math.max(1, nSel - 1) }),
+      nextN: () => this.setState({ n: Math.min(Math.max(1, simVals.maxShown), nSel + 1) }),
+      prevDisabled: nSel <= 1, nextDisabled: nSel >= simVals.maxShown,
+      ptabs: ptabs, pFormula: pFormula, pNote: pNote, pHasLab: s.ptab !== 'grating',
+      qHeading: isLesson ? (stage === 4 ? 'Practice with variation: the same three steps' : 'Check yourself') : (s.ptab === 'grating' ? 'Diffraction grating practice' : (s.ptab === 'slit' ? 'Double slit practice' : 'Which formula?')),
+      qs: qs,
+      backStage: () => this.setState({ stage: Math.max(1, pos - 1) }),
+      backDisabled: pos <= 1,
+      nextStage: () => (last ? this.setState({ view: 'practice' }) : this.setState({ stage: pos + 1 })),
+      nextStageDisabled: false,
+      nextLabel: nextLabel, navNote: navNote,
+      totalScore: totalCorrect + ' / ' + pl.length + ' correct',
+      report: report,
+      resetPractice: () => {
+        const ids = {};
+        pl.forEach((q) => { ids[q.id] = true; });
+        const keep = (o) => { const n = {}; Object.keys(o).forEach((k) => { if (!ids[k]) n[k] = o[k]; }); return n; };
+        this.setState({ ans: keep(s.ans), hints: keep(s.hints), sols: keep(s.sols), ink: keep(s.ink), cur: null });
+      }
+    };
+    return Object.assign(learn, this.labVals(isSim));
+  }
+}
+
+mountDC(Component, document.getElementById('tpl'), document.getElementById('app'), {});
+</script>
+</body>
+</html>
